@@ -465,8 +465,8 @@ namespace MyGameDevTools.FixedInput
                     FixedInputEvent value = (FixedInputEvent)surface.Fields[i].GetValue(surface.Target);
                     IntentTrack track = surface.Tracks[i];
 
-                    surface.Ages[i].text = Age(value, tick, track, out Color colour);
-                    surface.Ages[i].style.color = colour;
+                    surface.Ages[i].text = Age(value, tick, track, out Color color);
+                    surface.Ages[i].style.color = color;
 
                     PaintStrip(surface.Strips[i], track);
                 }
@@ -502,11 +502,11 @@ namespace MyGameDevTools.FixedInput
             }
         }
 
-        static string Age(in FixedInputEvent value, uint tick, IntentTrack track, out Color colour)
+        static string Age(in FixedInputEvent value, uint tick, IntentTrack track, out Color color)
         {
             if (!value.IsArmed)
             {
-                colour = Dim;
+                color = Dim;
                 return track.LastConsume.age < 0 ? "—" : "+" + track.LastConsume.age;
             }
 
@@ -514,17 +514,17 @@ namespace MyGameDevTools.FixedInput
 
             if (age > uint.MaxValue / 2)
             {
-                colour = Set;
+                color = Set;
                 return "next";
             }
 
             if (age > track.Window)
             {
-                colour = Expired;
+                color = Expired;
                 return "lost";
             }
 
-            colour = Set;
+            color = Set;
             return "+" + age;
         }
 
@@ -612,11 +612,11 @@ namespace MyGameDevTools.FixedInput
             return label;
         }
 
-        static Label Text(string text, int size, Color colour)
+        static Label Text(string text, int size, Color color)
         {
             Label label = new Label(text);
             label.style.fontSize = size;
-            label.style.color = colour;
+            label.style.color = color;
             return label;
         }
 
@@ -646,14 +646,14 @@ namespace MyGameDevTools.FixedInput
             element.style.paddingTop = element.style.paddingBottom = vertical;
         }
 
-        static void SetBorder(VisualElement element, int width, Color colour)
+        static void SetBorder(VisualElement element, int width, Color color)
         {
             element.style.borderTopWidth = element.style.borderBottomWidth = width;
             element.style.borderLeftWidth = element.style.borderRightWidth = width;
-            element.style.borderTopColor = colour;
-            element.style.borderBottomColor = colour;
-            element.style.borderLeftColor = colour;
-            element.style.borderRightColor = colour;
+            element.style.borderTopColor = color;
+            element.style.borderBottomColor = color;
+            element.style.borderLeftColor = color;
+            element.style.borderRightColor = color;
         }
     }
 }
