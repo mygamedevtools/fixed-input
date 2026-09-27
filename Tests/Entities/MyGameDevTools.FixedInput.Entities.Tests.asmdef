@@ -1,0 +1,36 @@
+{
+    "name": "MyGameDevTools.FixedInput.Entities.Tests",
+    "rootNamespace": "MyGameDevTools.FixedInput.Tests",
+    "references": [
+        "MyGameDevTools.FixedInput",
+        "MyGameDevTools.FixedInput.Entities",
+        "Unity.Entities",
+        "Unity.Collections",
+        "Unity.Burst",
+        "Unity.Mathematics",
+        "UnityEngine.TestRunner",
+        "UnityEditor.TestRunner"
+    ],
+    "includePlatforms": [
+        "Editor"
+    ],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": true,
+    "precompiledReferences": [
+        "nunit.framework.dll"
+    ],
+    "autoReferenced": false,
+    "defineConstraints": [
+        "UNITY_INCLUDE_TESTS",
+        "FIXEDINPUT_ENTITIES"
+    ],
+    "versionDefines": [
+        {
+            "name": "com.unity.entities",
+            "expression": "",
+            "define": "FIXEDINPUT_ENTITIES"
+        }
+    ],
+    "noEngineReferences": false
+}

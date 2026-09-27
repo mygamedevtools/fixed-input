@@ -1,0 +1,17 @@
+{
+    "name": "Sample.FixedInput",
+    "rootNamespace": "MyGameDevTools.FixedInput.Samples",
+    "references": [
+        "MyGameDevTools.FixedInput",
+        "Unity.InputSystem"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

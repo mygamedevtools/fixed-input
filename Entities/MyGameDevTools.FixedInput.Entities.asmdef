@@ -1,0 +1,28 @@
+{
+    "name": "MyGameDevTools.FixedInput.Entities",
+    "rootNamespace": "MyGameDevTools.FixedInput.Entities",
+    "references": [
+        "MyGameDevTools.FixedInput",
+        "Unity.Entities",
+        "Unity.Collections",
+        "Unity.Burst",
+        "Unity.Mathematics"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": true,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [
+        "FIXEDINPUT_ENTITIES"
+    ],
+    "versionDefines": [
+        {
+            "name": "com.unity.entities",
+            "expression": "",
+            "define": "FIXEDINPUT_ENTITIES"
+        }
+    ],
+    "noEngineReferences": false
+}
