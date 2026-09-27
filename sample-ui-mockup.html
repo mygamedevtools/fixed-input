@@ -1,0 +1,940 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Input Overlay Mockups</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap">
+<style>
+:root {
+  --page:      #0b0d12;
+  --page-ink:  #dfe3ea;
+  --page-mut:  #7d8596;
+  --page-line: #1e232e;
+  --page-card: #12161d;
+
+  /* The HUD keeps one look in any host theme: a game does not restyle its overlay
+     because the editor is in light mode. */
+  --hud-ink:   #eef1f6;
+  --hud-mut:   #98a2b5;
+  --hud-dim:   #5a6478;
+  --hud-line:  rgba(150,170,205,.18);
+  --hud-glass: rgba(10,14,21,.62);
+
+  --set:       #f4a93a;
+  --wait:      rgba(244,169,58,.32);
+  --consumed:  #35c2a5;
+  --expired:   #e85d6a;
+  --device:    #8fa2f2;
+
+  --mono: "IBM Plex Mono", ui-monospace, Menlo, monospace;
+  --cond: "Barlow Condensed", "Helvetica Neue", sans-serif;
+}
+
+@media (prefers-color-scheme: light) {
+  :root:not([data-theme="dark"]) {
+    --page:      #eceef2;
+    --page-ink:  #171b23;
+    --page-mut:  #5a6172;
+    --page-line: #d3d8e1;
+    --page-card: #ffffff;
+  }
+}
+
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  background: var(--page);
+  color: var(--page-ink);
+  font-family: var(--cond);
+  font-size: 16px;
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* ============ mockup chrome (not part of the design being judged) ============ */
+
+.chrome {
+  position: fixed;
+  top: 14px;
+  right: 14px;
+  z-index: 80;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  align-items: flex-end;
+  max-width: calc(100vw - 28px);
+}
+
+.chrome-label {
+  font-size: 10px;
+  letter-spacing: .18em;
+  text-transform: uppercase;
+  color: #6f7788;
+  font-family: var(--mono);
+}
+
+.chrome-row { display: flex; gap: 5px; flex-wrap: wrap; justify-content: flex-end; }
+
+.chrome button {
+  font-family: var(--mono);
+  font-size: 11px;
+  color: #aab3c4;
+  background: rgba(16,20,28,.85);
+  border: 1px solid #262c38;
+  border-radius: 3px;
+  padding: 5px 10px;
+  cursor: pointer;
+  backdrop-filter: blur(6px);
+}
+.chrome button:hover { color: #fff; border-color: #3b4454; }
+.chrome button[aria-pressed="true"] { color: #0b0d12; background: var(--set); border-color: var(--set); }
+.chrome button:focus-visible { outline: 2px solid var(--set); outline-offset: 2px; }
+
+/* ============ the faux game ============ */
+
+.stage {
+  position: relative;
+  height: 74vh;
+  min-height: 560px;
+  overflow: hidden;
+  background: linear-gradient(#0f1520 0%, #16202e 42%, #1b2836 42.001%, #24313f 100%);
+}
+
+.floor-grid {
+  position: absolute;
+  left: -20%; right: -20%; top: 42%; bottom: -10%;
+  background-image:
+    linear-gradient(to right, rgba(140,170,215,.10) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(140,170,215,.10) 1px, transparent 1px);
+  background-size: 7% 34px;
+  transform: perspective(300px) rotateX(62deg);
+  transform-origin: top center;
+  pointer-events: none;
+}
+
+.actor, .marker {
+  position: absolute;
+  transform: translate(-50%, -100%);
+  pointer-events: none;
+}
+
+.actor {
+  width: 34px; height: 62px;
+  border-radius: 17px / 20px;
+  background: linear-gradient(160deg, #cfd8ee, #8c9ab8);
+  box-shadow: 0 10px 26px rgba(0,0,0,.55), inset 0 -8px 14px rgba(0,0,0,.18);
+  transition: background .08s linear;
+}
+.actor.attacking { background: linear-gradient(160deg, #ffd79a, #f0a133); }
+
+.actor::after {
+  content: "";
+  position: absolute;
+  left: 50%; bottom: -9px;
+  width: 40px; height: 11px;
+  transform: translateX(-50%);
+  border-radius: 50%;
+  background: rgba(0,0,0,.42);
+  filter: blur(3px);
+}
+
+.marker {
+  width: 26px; height: 10px;
+  border-radius: 50%;
+  border: 2px solid rgba(180,200,235,.5);
+  background: rgba(150,180,225,.12);
+}
+
+/* ============ shared HUD atoms ============ */
+
+.hud { position: absolute; z-index: 20; font-family: var(--mono); color: var(--hud-ink); }
+
+.glass {
+  background: var(--hud-glass);
+  border: 1px solid var(--hud-line);
+  border-radius: 5px;
+  backdrop-filter: blur(9px) saturate(1.1);
+  box-shadow: 0 8px 28px rgba(0,0,0,.35);
+}
+
+.cells { display: flex; gap: 1px; }
+.cell { flex: 1 1 0; min-width: 0; background: rgba(150,175,215,.10); border-radius: 1px; }
+.cell.set { background: var(--set); }
+.cell.wait { background: var(--wait); }
+.cell.consumed { background: var(--consumed); }
+.cell.both { background: var(--consumed); border-top: 3px solid var(--set); }
+.cell.expired { background: var(--expired); }
+
+.key-cap {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 20px; height: 20px;
+  padding: 0 5px;
+  border-radius: 3px;
+  border: 1px solid var(--hud-line);
+  background: rgba(150,175,215,.10);
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--hud-mut);
+}
+.key-cap.down { background: var(--device); color: #0b0d12; border-color: transparent; }
+
+.tick-num { font-variant-numeric: tabular-nums; }
+
+.variant { display: none; }
+.variant.on { display: block; }
+
+/* ---- A: corner ribbon ---- */
+
+#ribbon { left: 20px; bottom: 20px; padding: 9px 12px 10px; width: 368px; }
+
+.ribbon-top {
+  display: flex; align-items: baseline; justify-content: space-between;
+  margin-bottom: 8px;
+}
+.ribbon-tick { font-family: var(--cond); font-size: 22px; font-weight: 700; letter-spacing: .01em; }
+.ribbon-tick small { font-size: 10px; font-family: var(--mono); color: var(--hud-dim); margin-right: 6px; letter-spacing: .14em; }
+.ribbon-keys { display: flex; gap: 4px; }
+
+.lane { display: flex; align-items: center; gap: 8px; margin-top: 5px; }
+.lane-name {
+  width: 52px; flex: none;
+  font-size: 10px; letter-spacing: .1em; text-transform: uppercase; color: var(--hud-mut);
+}
+.lane .cells { flex: 1; height: 11px; }
+.lane-age { width: 30px; text-align: right; font-size: 10px; color: var(--hud-dim); }
+
+.ribbon-rule { height: 1px; background: var(--hud-line); margin: 9px 0 7px; }
+
+.frame-row {
+  display: flex; align-items: center; gap: 7px;
+  font-size: 10.5px; color: var(--hud-mut);
+  font-variant-numeric: tabular-nums;
+}
+.frame-row b { color: var(--hud-ink); font-weight: 600; }
+.frame-row .sep { color: var(--hud-dim); }
+.frame-row canvas { margin-left: auto; display: block; opacity: .85; }
+.frame-row.warn #r-spf, .frame-row.warn #r-spf-label { color: var(--set); }
+
+.ctl-row { display: flex; align-items: center; gap: 3px; margin-top: 7px; flex-wrap: wrap; }
+.ctl-label {
+  font-size: 9px; letter-spacing: .14em; text-transform: uppercase;
+  color: var(--hud-dim); margin-right: 3px;
+}
+.ctl-label + .ctl-label, .ctl-row button + .ctl-label { margin-left: 8px; }
+
+.ctl-row button {
+  font-family: var(--mono); font-size: 10px;
+  color: var(--hud-mut);
+  background: rgba(150,175,215,.08);
+  border: 1px solid var(--hud-line);
+  border-radius: 3px;
+  padding: 3px 6px;
+  cursor: pointer;
+  min-width: 26px;
+}
+.ctl-row button:hover { color: var(--hud-ink); border-color: var(--hud-mut); }
+.ctl-row button[aria-pressed="true"] { background: var(--set); color: #0b0d12; border-color: var(--set); }
+.ctl-row button:focus-visible { outline: 2px solid var(--set); outline-offset: 1px; }
+
+/* ---- B: input column, the fighting-game read ---- */
+
+#column { right: 20px; top: 20px; width: 236px; padding: 8px; }
+
+.col-head {
+  display: flex; justify-content: space-between; align-items: baseline;
+  padding: 2px 4px 8px;
+  border-bottom: 1px solid var(--hud-line);
+  margin-bottom: 6px;
+}
+.col-head b { font-family: var(--cond); font-size: 19px; }
+.col-head span { font-size: 10px; color: var(--hud-dim); letter-spacing: .12em; }
+
+.press {
+  display: grid;
+  grid-template-columns: 26px 1fr auto;
+  gap: 8px;
+  align-items: center;
+  padding: 5px 4px;
+  border-radius: 3px;
+  font-size: 11px;
+}
+.press + .press { border-top: 1px solid rgba(150,170,205,.08); }
+.press .glyph {
+  display: flex; align-items: center; justify-content: center;
+  height: 22px;
+  border-radius: 3px;
+  font-weight: 600;
+  background: rgba(150,175,215,.12);
+}
+.press .verdict { color: var(--hud-mut); }
+.press .lag { font-variant-numeric: tabular-nums; color: var(--hud-dim); }
+
+.press.ok .glyph { background: rgba(53,194,165,.18); color: var(--consumed); }
+.press.ok .verdict { color: var(--consumed); }
+.press.bad .glyph { background: rgba(232,93,106,.18); color: var(--expired); }
+.press.bad .verdict { color: var(--expired); }
+.press.pending .glyph { background: rgba(244,169,58,.20); color: var(--set); }
+.press.pending .verdict { color: var(--set); }
+
+/* ---- C: world-space tag ---- */
+
+#tag { pointer-events: none; }
+
+.tag-box {
+  position: absolute;
+  transform: translate(-50%, -100%);
+  padding: 6px 9px 7px;
+  min-width: 152px;
+}
+.tag-box::after {
+  content: "";
+  position: absolute;
+  left: 50%; bottom: -5px;
+  width: 8px; height: 8px;
+  transform: translateX(-50%) rotate(45deg);
+  background: var(--hud-glass);
+  border-right: 1px solid var(--hud-line);
+  border-bottom: 1px solid var(--hud-line);
+}
+
+.tag-top {
+  display: flex; justify-content: space-between; align-items: baseline;
+  font-size: 10px; color: var(--hud-dim); letter-spacing: .1em;
+  margin-bottom: 5px;
+}
+.tag-row { display: flex; align-items: center; gap: 7px; margin-top: 3px; }
+.tag-row .n { width: 42px; font-size: 10px; text-transform: uppercase; letter-spacing: .08em; color: var(--hud-mut); }
+.tag-row .cells { flex: 1; height: 8px; }
+
+/* ---- D: drawer ---- */
+
+#drawer { left: 0; right: 0; bottom: 0; }
+
+.drawer-bar {
+  display: flex; align-items: center; gap: 14px;
+  padding: 7px 16px;
+  border-radius: 0;
+  border-left: 0; border-right: 0; border-bottom: 0;
+  cursor: pointer;
+}
+.drawer-bar b { font-family: var(--cond); font-size: 18px; }
+.drawer-bar .hint { margin-left: auto; font-size: 10px; color: var(--hud-dim); letter-spacing: .1em; }
+
+.pips { display: flex; gap: 10px; }
+.pip { display: flex; align-items: center; gap: 5px; font-size: 10px; color: var(--hud-mut); letter-spacing: .08em; }
+.pip i { width: 9px; height: 9px; border-radius: 50%; background: rgba(150,175,215,.18); }
+.pip i.on { background: var(--set); box-shadow: 0 0 9px var(--set); }
+.pip i.hot { background: var(--consumed); box-shadow: 0 0 9px var(--consumed); }
+
+.drawer-body {
+  border-top: 1px solid var(--hud-line);
+  padding: 12px 16px 14px;
+  display: none;
+  background: rgba(8,11,17,.72);
+}
+.drawer.open .drawer-body { display: block; }
+
+.stack { display: grid; grid-template-columns: repeat(auto-fit, minmax(210px, 1fr)); gap: 16px; }
+.stack h4 {
+  margin: 0 0 6px;
+  font-family: var(--mono);
+  font-size: 9px; letter-spacing: .16em; text-transform: uppercase; color: var(--hud-dim);
+}
+.kv { display: flex; justify-content: space-between; gap: 10px; font-size: 11px; padding: 2px 0; }
+.kv span:first-child { color: var(--hud-mut); }
+
+.transport { display: flex; gap: 6px; align-items: center; margin-top: 12px; flex-wrap: wrap; }
+.transport button {
+  font-family: var(--mono); font-size: 10px;
+  color: var(--hud-ink);
+  background: rgba(150,175,215,.10);
+  border: 1px solid var(--hud-line);
+  border-radius: 3px;
+  padding: 4px 9px;
+  cursor: pointer;
+}
+.transport button:hover { border-color: var(--hud-mut); }
+.transport button[aria-pressed="true"] { background: var(--set); color: #0b0d12; border-color: var(--set); }
+.transport button:focus-visible { outline: 2px solid var(--set); outline-offset: 1px; }
+
+/* ============ notes ============ */
+
+.notes { max-width: 980px; margin: 0 auto; padding: 34px 20px 70px; }
+.notes h1 { font-size: 27px; font-weight: 600; margin: 0 0 6px; letter-spacing: .01em; }
+.notes .lede { color: var(--page-mut); margin: 0 0 26px; max-width: 64ch; font-size: 16px; }
+
+.cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(230px, 1fr)); gap: 16px; }
+.card { background: var(--page-card); border: 1px solid var(--page-line); border-radius: 5px; padding: 15px 16px; }
+.card h3 { margin: 0 0 4px; font-size: 16px; font-weight: 600; }
+.card .tagline { font-family: var(--mono); font-size: 10px; letter-spacing: .1em; text-transform: uppercase; color: var(--page-mut); margin: 0 0 9px; }
+.card p { margin: 0 0 8px; font-size: 15px; }
+.card p:last-child { margin: 0; }
+
+.verdict-box { margin-top: 26px; border-left: 2px solid var(--set); padding-left: 16px; max-width: 68ch; }
+.verdict-box p { margin: 0 0 10px; }
+.verdict-box p:last-child { margin: 0; }
+
+code { font-family: var(--mono); font-size: .88em; background: rgba(140,160,200,.12); padding: 1px 5px; border-radius: 3px; }
+
+@media (max-width: 720px) {
+  #ribbon { width: calc(100% - 40px); }
+  #column { width: 200px; top: 64px; }
+  .stage { height: 68vh; }
+}
+
+@media (prefers-reduced-motion: reduce) { * { transition: none !important; } }
+</style>
+</head>
+<body>
+
+<div class="chrome">
+  <div class="chrome-label">mockup · pick an overlay</div>
+  <div class="chrome-row" role="group" aria-label="Overlay variant">
+    <button type="button" id="v-ribbon" aria-pressed="true">A · ribbon</button>
+    <button type="button" id="v-column" aria-pressed="false">B · input column</button>
+    <button type="button" id="v-tag" aria-pressed="false">C · world tag</button>
+    <button type="button" id="v-drawer" aria-pressed="false">D · drawer</button>
+    <button type="button" id="v-combo" aria-pressed="false">A+C+D</button>
+  </div>
+</div>
+
+<div class="stage" id="stage">
+  <div class="floor-grid"></div>
+  <div class="marker" id="marker"></div>
+  <div class="actor" id="actor"></div>
+
+  <!-- A: corner ribbon -->
+  <div class="hud glass variant on" id="ribbon">
+    <div class="ribbon-top">
+      <div class="ribbon-tick"><small>TICK</small><span class="tick-num" id="r-tick">0</span></div>
+      <div class="ribbon-keys">
+        <span class="key-cap" id="r-k-j">J</span>
+        <span class="key-cap" id="r-k-sp">SPC</span>
+      </div>
+    </div>
+    <div class="lane">
+      <div class="lane-name">Attack</div>
+      <div class="cells" id="r-attack"></div>
+      <div class="lane-age" id="r-attack-age">—</div>
+    </div>
+    <div class="lane">
+      <div class="lane-name">Jump</div>
+      <div class="cells" id="r-jump"></div>
+      <div class="lane-age" id="r-jump-age">—</div>
+    </div>
+
+    <div class="ribbon-rule"></div>
+
+    <div class="frame-row">
+      <b id="r-fps">60</b> fps
+      <span class="sep">·</span>
+      <b id="r-hz">50</b> Hz
+      <span class="sep">·</span>
+      <b id="r-spf">1.0</b> <span id="r-spf-label">steps/frame</span>
+      <canvas id="r-graph" width="104" height="16" aria-label="frame time"></canvas>
+    </div>
+
+    <div class="ctl-row">
+      <span class="ctl-label">fps</span>
+      <button type="button" data-fps="0" aria-pressed="true">max</button>
+      <button type="button" data-fps="144" aria-pressed="false">144</button>
+      <button type="button" data-fps="60" aria-pressed="false">60</button>
+      <button type="button" data-fps="30" aria-pressed="false">30</button>
+      <button type="button" data-fps="12" aria-pressed="false">12</button>
+      <span class="ctl-label">scale</span>
+      <button type="button" data-scale="1" aria-pressed="true">1</button>
+      <button type="button" data-scale="0.25" aria-pressed="false">.25</button>
+      <button type="button" data-scale="0.05" aria-pressed="false">.05</button>
+      <button type="button" id="r-pause" aria-pressed="false">||</button>
+    </div>
+  </div>
+
+  <!-- B: input column -->
+  <div class="hud glass variant" id="column">
+    <div class="col-head">
+      <b class="tick-num" id="c-tick">0</b>
+      <span>INPUT HISTORY</span>
+    </div>
+    <div id="c-list"></div>
+  </div>
+
+  <!-- C: world-space tag -->
+  <div class="hud variant" id="tag">
+    <div class="tag-box glass" id="tag-box">
+      <div class="tag-top"><span id="t-who">KEYBOARD</span><span class="tick-num" id="t-tick">0</span></div>
+      <div class="tag-row"><div class="n">Attack</div><div class="cells" id="t-attack"></div></div>
+      <div class="tag-row"><div class="n">Jump</div><div class="cells" id="t-jump"></div></div>
+    </div>
+  </div>
+
+  <!-- D: drawer -->
+  <div class="hud variant" id="drawer">
+    <div class="drawer" id="drawer-inner">
+      <div class="drawer-bar glass" id="drawer-bar" role="button" tabindex="0" aria-expanded="false">
+        <b><span class="tick-num" id="d-tick">0</span></b>
+        <div class="pips">
+          <div class="pip"><i id="d-pip-attack"></i>ATTACK</div>
+          <div class="pip"><i id="d-pip-jump"></i>JUMP</div>
+        </div>
+        <div class="hint" id="d-hint">F3 to expand</div>
+      </div>
+      <div class="drawer-body">
+        <div class="stack">
+          <div>
+            <h4>Device · in Update</h4>
+            <div class="kv"><span>writer</span><span id="d-writer">scripted agent</span></div>
+            <div class="kv"><span>move</span><span id="d-move">(0.00, 0.00)</span></div>
+            <div class="kv"><span>buttons</span><span id="d-buttons">J up · Space up</span></div>
+          </div>
+          <div>
+            <h4>Surface · DemoInputSurface</h4>
+            <div class="kv"><span>Attack</span><span id="d-attack">idle</span></div>
+            <div class="kv"><span>Jump</span><span id="d-jump">idle</span></div>
+          </div>
+          <div>
+            <h4>Reader · in FixedUpdate</h4>
+            <div class="kv"><span>locomotion</span><span id="d-loco">idle</span></div>
+            <div class="kv"><span>action</span><span id="d-action">none</span></div>
+          </div>
+        </div>
+        <div class="transport">
+          <button type="button" id="d-pause">pause</button>
+          <button type="button" id="d-step">step 1</button>
+          <button type="button" id="d-s1" aria-pressed="true">1x</button>
+          <button type="button" id="d-s25" aria-pressed="false">0.25x</button>
+          <button type="button" id="d-s05" aria-pressed="false">0.05x</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="notes">
+  <h1>Input Overlay Mockups</h1>
+  <p class="lede">
+    Four ways to show the same thing without taking the screen. Each runs the real logic at 50&nbsp;Hz:
+    wrapping subtraction in <code>Peek</code>, peek to test and consume to act, a 14-step attack
+    buffer that chains, and a 6-step jump buffer.
+  </p>
+
+  <div class="cards">
+    <div class="card">
+      <h3>A · Corner ribbon</h3>
+      <p class="tagline">always on · 368×150</p>
+      <p>Tick, live key caps, one scrolling lane per intent, and a frame strip underneath: measured
+        fps, the fixed rate, a frame-time graph, and the ratio between them.</p>
+      <p>The rate control is the part that earns its space. Cap to 12 fps and the loop really does
+        run less often, so steps pile up between frames and the ratio flips to <b>steps/frame</b> in
+        amber. Watch the character keep walking at exactly the same speed and you have proved frame
+        independence rather than assumed it.</p>
+    </div>
+    <div class="card">
+      <h3>B · Input column</h3>
+      <p class="tagline">always on · fighting-game read</p>
+      <p>One row per press, newest on top: what was pressed, the step it bound to, and how it
+        resolved.</p>
+      <p>The most legible for <em>why did that press not come out</em>, which is the question this
+        package exists to answer. Costs a strip of screen edge.</p>
+    </div>
+    <div class="card">
+      <h3>C · World tag</h3>
+      <p class="tagline">anchored to the character</p>
+      <p>Floats above whoever it watches, so with several characters you can see which agent is
+        doing what without picking them out of a list.</p>
+      <p>The only option that scales past one subject. Clutters fast if everything is tagged.</p>
+    </div>
+    <div class="card">
+      <h3>D · Drawer</h3>
+      <p class="tagline">collapsed 34px · opens on F3</p>
+      <p>A thin bar with the tick and a lit pip per intent. Open it for the three stages and the
+        transport.</p>
+      <p>Costs almost nothing until you need it, and holds everything when you do.</p>
+    </div>
+  </div>
+
+  <div class="verdict-box">
+    <p><strong>What I would ship:</strong> A and D together, with C opt-in per character. The ribbon
+      answers <em>is input flowing</em> at a glance, the drawer answers <em>why not</em> on demand,
+      and the tag answers <em>which one</em> when there are several.</p>
+    <p>B is the strongest single view, but it only fits one surface. It belongs inside the expanded
+      drawer as a tab rather than as the always-on layer. Try A+C+D above to see the combination.</p>
+    <p>In Unity the two controls map to <code>Application.targetFrameRate</code> with vsync off, and
+      <code>Time.timeScale</code>. Both are global, so the overlay has to hand them back on disable
+      or it leaves the game it was inspecting running at a twentieth speed.</p>
+  </div>
+</div>
+
+<script>
+(function () {
+  "use strict";
+
+  const TICK_MS = 20, HISTORY = 44, ATTACK_WIN = 14, JUMP_WIN = 6;
+  const ATTACK_DUR = 20, ATTACK_CHAIN = 10;
+
+  const sim = {
+    tick: 0,
+    pos: { x: 0, z: 0 },
+    move: { x: 0, z: 0 },
+    attack: { armed: false, setTick: 0 },
+    jump: { armed: false, setTick: 0 },
+    attacking: false, attackEnds: 0,
+    vy: 0, y: 0,
+    rawJ: false, rawSpace: false,
+    nextAttackAt: 40, nextJumpAt: 150,
+    lastConsume: { attack: null, jump: null },
+    presses: [],
+    hist: { attack: [], jump: [] },
+    expiryFlagged: { attack: false, jump: false }
+  };
+
+  const before = (a, b) => ((a - b) >>> 0) > 0x7fffffff;
+  const peek = (e, t, w) => e.armed && ((t - e.setTick) >>> 0) <= w;
+
+  let pend = { attack: "", jump: "" };
+  const mark = (k, v) => { if (!(pend[k] === "set" && v === "consumed")) pend[k] = v; };
+
+  function press(kind, tick) {
+    sim[kind].armed = true;
+    sim[kind].setTick = tick;
+    sim.expiryFlagged[kind] = false;
+    mark(kind, "set");
+    sim.presses.unshift({ kind, tick, state: "pending", lag: null });
+    if (sim.presses.length > 9) sim.presses.pop();
+  }
+
+  function resolve(kind, state, lag) {
+    const p = sim.presses.find(p => p.kind === kind && p.state === "pending");
+    if (p) { p.state = state; p.lag = lag; }
+  }
+
+  function advance() {
+    const t = sim.tick;
+    sim.rawJ = false; sim.rawSpace = false;
+
+    // --- writer: a scripted agent, walking to the marker and attacking in range ---
+    const dx = 0 - sim.pos.x, dz = 4 - sim.pos.z;
+    const dist = Math.hypot(dx, dz);
+    sim.move = dist < 0.1 ? { x: 0, z: 0 } : { x: dx / dist, z: dz / dist };
+
+    if (dist <= 2 && t >= sim.nextAttackAt) {
+      sim.rawJ = true;
+      press("attack", t);
+      sim.nextAttackAt = t + 30;
+    }
+    if (t >= sim.nextJumpAt) {
+      sim.rawSpace = true;
+      press("jump", t);
+      sim.nextJumpAt = t + 140 + Math.floor(Math.random() * 90);
+    }
+
+    // --- reader ---
+    if (sim.attacking && !before(t, sim.attackEnds)) sim.attacking = false;
+
+    const wants = peek(sim.attack, t, ATTACK_WIN);
+    const canChain = sim.attacking && !before(t, (sim.attackEnds - ATTACK_CHAIN) >>> 0);
+
+    if (wants && (!sim.attacking || canChain)) {
+      const lag = (t - sim.attack.setTick) >>> 0;
+      sim.attack.armed = false;
+      sim.attacking = true;
+      sim.attackEnds = t + ATTACK_DUR;
+      sim.lastConsume.attack = { tick: t, lag };
+      resolve("attack", "ok", lag);
+      mark("attack", "consumed");
+    } else if (sim.attack.armed) {
+      const age = (t - sim.attack.setTick) >>> 0;
+      if (age > ATTACK_WIN) {
+        if (!sim.expiryFlagged.attack) { sim.expiryFlagged.attack = true; mark("attack", "expired"); resolve("attack", "bad", null); }
+      } else if (age > 0) mark("attack", "wait");
+    }
+
+    const grounded = sim.y <= 0.001 && sim.vy <= 0;
+    if (grounded) {
+      sim.vy = 0;
+      if (peek(sim.jump, t, JUMP_WIN)) {
+        const lag = (t - sim.jump.setTick) >>> 0;
+        sim.jump.armed = false;
+        sim.vy = 6;
+        sim.lastConsume.jump = { tick: t, lag };
+        resolve("jump", "ok", lag);
+        mark("jump", "consumed");
+      }
+    }
+    if (sim.jump.armed) {
+      const age = (t - sim.jump.setTick) >>> 0;
+      if (age > JUMP_WIN) {
+        if (!sim.expiryFlagged.jump) { sim.expiryFlagged.jump = true; mark("jump", "expired"); resolve("jump", "bad", null); }
+      } else if (age > 0) mark("jump", "wait");
+    }
+
+    // --- motion ---
+    const speed = sim.attacking ? 0 : 4;
+    sim.pos.x += sim.move.x * speed * 0.02;
+    sim.pos.z += sim.move.z * speed * 0.02;
+    sim.vy += -18 * 0.02;
+    sim.y = Math.max(0, sim.y + sim.vy * 0.02);
+    if (sim.y <= 0) sim.vy = 0;
+
+    for (const k of ["attack", "jump"]) {
+      sim.hist[k].push(pend[k]);
+      if (sim.hist[k].length > HISTORY) sim.hist[k].shift();
+    }
+    pend = { attack: "", jump: "" };
+    sim.tick++;
+  }
+
+  // ---------- DOM ----------
+  const el = id => document.getElementById(id);
+  const strips = {};
+
+  function buildStrip(node) {
+    node.innerHTML = "";
+    const cells = [];
+    for (let i = 0; i < HISTORY; i++) {
+      const d = document.createElement("div");
+      d.className = "cell";
+      node.appendChild(d);
+      cells.push(d);
+    }
+    strips[node.id] = cells;
+  }
+
+  ["r-attack", "r-jump", "t-attack", "t-jump"].forEach(id => buildStrip(el(id)));
+
+  function paint(id, kind) {
+    const cells = strips[id], h = sim.hist[kind];
+    for (let i = 0; i < cells.length; i++) {
+      const v = h[i - (cells.length - h.length)] || "";
+      cells[i].className = "cell" + (v ? " " + (v === "consumed" && h[i - 1] === "set" ? "both" : v) : "");
+    }
+  }
+
+  function project(x, z, y) {
+    const st = el("stage"), w = st.clientWidth, hgt = st.clientHeight;
+    const tz = Math.max(0, Math.min(1, (z + 2) / 12));
+    const scale = 1 - tz * 0.42;
+    const groundY = hgt * 0.94 - tz * (hgt * 0.42);
+    return { x: w * 0.52 + x * 78 * scale, y: groundY - y * 26 * scale, scale };
+  }
+
+  function ageText(e, t, win) {
+    if (!e.armed) return "—";
+    const a = (t - e.setTick) >>> 0;
+    if (a > 0x7fffffff) return "→";
+    return a > win ? "lost" : "+" + a;
+  }
+
+  function render() {
+    const t = sim.tick;
+
+    const p = project(sim.pos.x, sim.pos.z, sim.y);
+    const actor = el("actor");
+    actor.style.left = p.x + "px";
+    actor.style.top = p.y + "px";
+    actor.style.transform = `translate(-50%, -100%) scale(${p.scale.toFixed(3)})`;
+    actor.classList.toggle("attacking", sim.attacking);
+
+    const m = project(0, 4, 0);
+    const marker = el("marker");
+    marker.style.left = m.x + "px";
+    marker.style.top = m.y + "px";
+
+    // A
+    el("r-tick").textContent = t;
+
+    el("r-fps").textContent = Math.round(fpsAvg);
+    el("r-hz").textContent = Math.round(1000 / TICK_MS);
+
+    // Below one step per frame the useful number inverts: what matters then is how many frames
+    // pass between steps, because that is how many presses an Update writer can collapse into one.
+    const stepsPerFrame = fpsAvg > 0 ? (1000 / TICK_MS) * speed / fpsAvg : 0;
+    const spf = el("r-spf"), label = el("r-spf-label");
+
+    if (stepsPerFrame >= 1) {
+      spf.textContent = stepsPerFrame.toFixed(1);
+      label.textContent = "steps/frame";
+      spf.parentElement.classList.add("warn");
+    } else {
+      spf.textContent = stepsPerFrame > 0 ? (1 / stepsPerFrame).toFixed(1) : "—";
+      label.textContent = "frames/step";
+      spf.parentElement.classList.remove("warn");
+    }
+    el("r-k-j").classList.toggle("down", sim.rawJ);
+    el("r-k-sp").classList.toggle("down", sim.rawSpace);
+    paint("r-attack", "attack"); paint("r-jump", "jump");
+    el("r-attack-age").textContent = ageText(sim.attack, t, ATTACK_WIN);
+    el("r-jump-age").textContent = ageText(sim.jump, t, JUMP_WIN);
+
+    // B
+    el("c-tick").textContent = t;
+    el("c-list").innerHTML = sim.presses.map(pr => {
+      const cls = pr.state === "ok" ? "ok" : pr.state === "bad" ? "bad" : "pending";
+      const verdict = pr.state === "ok" ? "consumed" : pr.state === "bad" ? "never consumed" : "waiting";
+      const lag = pr.state === "ok" ? "+" + pr.lag : pr.state === "bad" ? "✕" : "…";
+      return `<div class="press ${cls}"><div class="glyph">${pr.kind === "attack" ? "J" : "␣"}</div>` +
+             `<div><div>${pr.kind === "attack" ? "Attack" : "Jump"} <span class="lag">@${pr.tick}</span></div>` +
+             `<div class="verdict">${verdict}</div></div><div class="lag">${lag}</div></div>`;
+    }).join("");
+
+    // C
+    const tagBox = el("tag-box");
+    tagBox.style.left = p.x + "px";
+    tagBox.style.top = (p.y - 74 * p.scale) + "px";
+    el("t-tick").textContent = t;
+    el("t-who").textContent = "SCRIPTED AGENT";
+    paint("t-attack", "attack"); paint("t-jump", "jump");
+
+    // D
+    el("d-tick").textContent = t;
+    el("d-pip-attack").className = sim.attack.armed ? "on" : (sim.attacking ? "hot" : "");
+    el("d-pip-jump").className = sim.jump.armed ? "on" : "";
+    el("d-move").textContent = `(${sim.move.x.toFixed(2)}, ${sim.move.z.toFixed(2)})`;
+    el("d-buttons").textContent = `J ${sim.rawJ ? "down" : "up"} · Space ${sim.rawSpace ? "down" : "up"}`;
+    el("d-attack").textContent = describe(sim.attack, t, ATTACK_WIN, sim.lastConsume.attack);
+    el("d-jump").textContent = describe(sim.jump, t, JUMP_WIN, sim.lastConsume.jump);
+    el("d-loco").textContent = sim.attacking ? "rooted, attacking" : (Math.hypot(sim.move.x, sim.move.z) > 0.01 ? "moving" : "idle");
+    el("d-action").textContent = sim.attacking ? `attacking, ${(sim.attackEnds - t) >>> 0} left` : "none";
+  }
+
+  function describe(e, t, win, last) {
+    if (!e.armed) return last ? `idle · last @${last.tick}, +${last.lag}` : "idle";
+    const a = (t - e.setTick) >>> 0;
+    if (a > 0x7fffffff) return `pending · binds ${e.setTick}`;
+    return a > win ? `EXPIRED · set ${e.setTick}` : `armed · +${a} of ${win}`;
+  }
+
+  // ---------- clock ----------
+  let paused = false, speed = 1, carry = 0, last = performance.now();
+  let renderHz = 0;            // 0 = uncapped
+  let stepsThisFrame = 0, fpsAvg = 60;
+  const frameTimes = [];
+
+  const graph = el("r-graph"), gctx = graph.getContext("2d");
+  const GW = 104, GH = 16, DPR = Math.min(2, window.devicePixelRatio || 1);
+  graph.width = GW * DPR; graph.height = GH * DPR;
+  graph.style.width = GW + "px"; graph.style.height = GH + "px";
+  gctx.scale(DPR, DPR);
+
+  function drawGraph() {
+    gctx.clearRect(0, 0, GW, GH);
+    if (!frameTimes.length) return;
+
+    const target = 1000 / 60;
+    const peak = Math.max(target * 2, ...frameTimes);
+
+    for (let i = 0; i < GW && i < frameTimes.length; i++) {
+      const v = frameTimes[frameTimes.length - 1 - i];
+      const h = Math.max(1, Math.round((v / peak) * GH));
+      gctx.fillStyle = v > target * 2 ? "#e85d6a" : v > target * 1.25 ? "#f4a93a" : "rgba(143,162,242,.7)";
+      gctx.fillRect(GW - 1 - i, GH - h, 1, h);
+    }
+  }
+
+  function frame(now) {
+    requestAnimationFrame(frame);
+
+    const since = now - last;
+
+    // Capping the rate throttles the whole loop, so fixed steps pile up between frames exactly as
+    // they do in a capped game. That is the point of the control: the simulation must not care.
+    if (renderHz > 0 && since < 1000 / renderHz - 0.6) return;
+    last = now;
+
+    frameTimes.push(Math.min(since, 300));
+    if (frameTimes.length > GW) frameTimes.shift();
+    const mean = frameTimes.reduce((a, b) => a + b, 0) / frameTimes.length;
+    fpsAvg = mean > 0 ? 1000 / mean : 0;
+
+    stepsThisFrame = 0;
+    if (!paused && speed > 0) {
+      carry += Math.min(since, 250) * speed;
+      while (carry >= TICK_MS && stepsThisFrame < 14) { carry -= TICK_MS; advance(); stepsThisFrame++; }
+    }
+
+    render();
+    drawGraph();
+  }
+
+  // ---------- variants ----------
+  const variants = {
+    "v-ribbon": ["ribbon"],
+    "v-column": ["column"],
+    "v-tag": ["tag"],
+    "v-drawer": ["drawer"],
+    "v-combo": ["ribbon", "tag", "drawer"]
+  };
+
+  function choose(id) {
+    Object.keys(variants).forEach(k => el(k).setAttribute("aria-pressed", String(k === id)));
+    ["ribbon", "column", "tag", "drawer"].forEach(v => el(v).classList.toggle("on", variants[id].includes(v)));
+  }
+
+  Object.keys(variants).forEach(k => el(k).addEventListener("click", () => choose(k)));
+
+  // ---------- drawer + transport ----------
+  const drawer = el("drawer-inner");
+  function toggleDrawer() {
+    drawer.classList.toggle("open");
+    const open = drawer.classList.contains("open");
+    el("drawer-bar").setAttribute("aria-expanded", String(open));
+    el("d-hint").textContent = open ? "F3 to collapse" : "F3 to expand";
+  }
+  el("drawer-bar").addEventListener("click", toggleDrawer);
+  el("drawer-bar").addEventListener("keydown", e => {
+    if (e.key === "Enter" || e.key === " ") { e.preventDefault(); toggleDrawer(); }
+  });
+  window.addEventListener("keydown", e => { if (e.key === "F3") { e.preventDefault(); toggleDrawer(); } });
+
+  function setSpeed(v, btn) {
+    speed = v; paused = false;
+    el("d-pause").textContent = "pause";
+    ["d-s1", "d-s25", "d-s05"].forEach(id => el(id).setAttribute("aria-pressed", String(id === btn)));
+  }
+  el("d-s1").addEventListener("click", () => setSpeed(1, "d-s1"));
+  el("d-s25").addEventListener("click", () => setSpeed(0.25, "d-s25"));
+  el("d-s05").addEventListener("click", () => setSpeed(0.05, "d-s05"));
+  el("d-pause").addEventListener("click", e => {
+    paused = !paused;
+    e.target.textContent = paused ? "resume" : "pause";
+  });
+  el("d-step").addEventListener("click", e => {
+    paused = true;
+    el("d-pause").textContent = "resume";
+    advance(); render();
+  });
+
+  // ---------- ribbon controls ----------
+  const fpsButtons = Array.from(document.querySelectorAll("[data-fps]"));
+  const scaleButtons = Array.from(document.querySelectorAll("[data-scale]"));
+
+  fpsButtons.forEach(b => b.addEventListener("click", () => {
+    renderHz = Number(b.dataset.fps);
+    fpsButtons.forEach(o => o.setAttribute("aria-pressed", String(o === b)));
+    frameTimes.length = 0;
+  }));
+
+  scaleButtons.forEach(b => b.addEventListener("click", () => {
+    speed = Number(b.dataset.scale);
+    paused = false;
+    el("r-pause").setAttribute("aria-pressed", "false");
+    scaleButtons.forEach(o => o.setAttribute("aria-pressed", String(o === b)));
+  }));
+
+  el("r-pause").addEventListener("click", () => {
+    paused = !paused;
+    el("r-pause").setAttribute("aria-pressed", String(paused));
+  });
+
+  window.addEventListener("resize", render);
+  choose("v-ribbon");
+  requestAnimationFrame(frame);
+})();
+</script>
+</body>
+</html>
