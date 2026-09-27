@@ -82,6 +82,6 @@ to run.
 there so the optional Entities assembly is compiled and tested; a consumer without Entities installs
 nothing extra and compiles nothing extra.
 
-## Licence
+## License
 
 MIT. See [LICENSE.txt](Packages/com.mygamedevtools.fixed-input/LICENSE.txt).
