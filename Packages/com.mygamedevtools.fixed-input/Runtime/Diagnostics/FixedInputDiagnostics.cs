@@ -13,7 +13,7 @@ namespace MyGameDevTools.FixedInput
     {
         /// <summary>Whether the checks run.</summary>
         public static bool Enabled { get; set; } =
-#if UNITY_EDITOR || DEVELOPMENT_BUILD
+#if UNITY_EDITOR || UNITY_ENABLE_CHECKS
             true;
 #else
             false;
@@ -22,7 +22,7 @@ namespace MyGameDevTools.FixedInput
         /// <summary>The window assumed for a field with no FixedInputWindow attribute.</summary>
         public static uint DefaultWindow { get; set; }
 
-#if UNITY_EDITOR || DEVELOPMENT_BUILD
+#if UNITY_EDITOR || UNITY_ENABLE_CHECKS
         static readonly List<WeakReference<object>> _surfaces = new List<WeakReference<object>>();
         static readonly Dictionary<Type, FieldInfo[]> _fieldsByType = new Dictionary<Type, FieldInfo[]>();
         static readonly Dictionary<FieldInfo, uint> _windowByField = new Dictionary<FieldInfo, uint>();
@@ -32,10 +32,10 @@ namespace MyGameDevTools.FixedInput
 #endif
 
         /// <summary>Watches an input surface for intents nobody consumes.</summary>
-        [Conditional("UNITY_EDITOR"), Conditional("DEVELOPMENT_BUILD")]
+        [Conditional("UNITY_EDITOR"), Conditional("UNITY_ENABLE_CHECKS")]
         public static void Register(object surface)
         {
-#if UNITY_EDITOR || DEVELOPMENT_BUILD
+#if UNITY_EDITOR || UNITY_ENABLE_CHECKS
             if (surface == null)
                 return;
 
@@ -50,10 +50,10 @@ namespace MyGameDevTools.FixedInput
         }
 
         /// <summary>Stops watching an input surface.</summary>
-        [Conditional("UNITY_EDITOR"), Conditional("DEVELOPMENT_BUILD")]
+        [Conditional("UNITY_EDITOR"), Conditional("UNITY_ENABLE_CHECKS")]
         public static void Unregister(object surface)
         {
-#if UNITY_EDITOR || DEVELOPMENT_BUILD
+#if UNITY_EDITOR || UNITY_ENABLE_CHECKS
             for (int i = _surfaces.Count - 1; i >= 0; i--)
             {
                 if (!_surfaces[i].TryGetTarget(out object target) || ReferenceEquals(target, surface))
@@ -63,7 +63,7 @@ namespace MyGameDevTools.FixedInput
         }
 
         /// <summary>Records that a writer set an intent, so a second writer in the same step can be named.</summary>
-        [Conditional("UNITY_EDITOR"), Conditional("DEVELOPMENT_BUILD")]
+        [Conditional("UNITY_EDITOR"), Conditional("UNITY_ENABLE_CHECKS")]
         public static void NoteSet(
             object surface,
             string field,
@@ -71,7 +71,7 @@ namespace MyGameDevTools.FixedInput
             [CallerFilePath] string callerFile = "",
             [CallerLineNumber] int callerLine = 0)
         {
-#if UNITY_EDITOR || DEVELOPMENT_BUILD
+#if UNITY_EDITOR || UNITY_ENABLE_CHECKS
             if (!Enabled || surface == null)
                 return;
 
@@ -105,10 +105,10 @@ namespace MyGameDevTools.FixedInput
         }
 
         /// <summary>Reports every registered intent that is armed and past its window.</summary>
-        [Conditional("UNITY_EDITOR"), Conditional("DEVELOPMENT_BUILD")]
+        [Conditional("UNITY_EDITOR"), Conditional("UNITY_ENABLE_CHECKS")]
         public static void CheckForUnconsumed(uint tick)
         {
-#if UNITY_EDITOR || DEVELOPMENT_BUILD
+#if UNITY_EDITOR || UNITY_ENABLE_CHECKS
             if (!Enabled)
                 return;
 
@@ -156,7 +156,7 @@ namespace MyGameDevTools.FixedInput
 #endif
         }
 
-#if UNITY_EDITOR || DEVELOPMENT_BUILD
+#if UNITY_EDITOR || UNITY_ENABLE_CHECKS
         [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
         static void OnEnteringPlayMode() => ResetState();
 

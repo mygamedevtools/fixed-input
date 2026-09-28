@@ -23,7 +23,7 @@ First release.
   - `MonoBehaviourTickSource`, for a project whose player loop is contested.
   - `ManualTickSource`, for tests and deterministic replay.
 - `MyFixedTick`, a settable ambient source, so a project can run off a clock it already owns.
-- `FixedInputDiagnostics`. In the editor and development builds, reports an intent nobody consumed
+- `FixedInputDiagnostics`. In the editor and in builds with `UNITY_ENABLE_CHECKS`, reports an intent nobody consumed
   and two writers setting one intent in a step, naming the field and both call sites.
 - `FixedInputWindowAttribute`, declaring how long a field may stay armed before the diagnostics
   call it lost.
