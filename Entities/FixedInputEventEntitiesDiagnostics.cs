@@ -25,6 +25,8 @@ namespace MyGameDevTools.FixedInput.Entities
         }
 
         NativeList<IntentField> _fields;
+        NativeArray<DynamicComponentTypeHandle> _handles;
+        EntityTypeHandle _entityHandle;
         EntityQuery _query;
 
         public void OnCreate(ref SystemState state)
@@ -58,6 +60,15 @@ namespace MyGameDevTools.FixedInput.Entities
 
             any.Dispose();
 
+            // Created once and refreshed each update; creating them in OnUpdate costs a lookup per
+            // frame and Entities warns about it.
+            _handles = new NativeArray<DynamicComponentTypeHandle>(_fields.Length, Allocator.Persistent);
+
+            for (int f = 0; f < _fields.Length; f++)
+                _handles[f] = state.GetDynamicComponentTypeHandle(_fields[f].Component);
+
+            _entityHandle = state.GetEntityTypeHandle();
+
             state.RequireForUpdate<FixedTickSingleton>();
         }
 
@@ -65,6 +76,9 @@ namespace MyGameDevTools.FixedInput.Entities
         {
             if (_fields.IsCreated)
                 _fields.Dispose();
+
+            if (_handles.IsCreated)
+                _handles.Dispose();
         }
 
         public void OnUpdate(ref SystemState state)
@@ -74,13 +88,15 @@ namespace MyGameDevTools.FixedInput.Entities
 
             uint tick = SystemAPI.GetSingleton<FixedTickSingleton>().Value;
 
-            // Handles are per-update state, so build them once rather than once per chunk.
-            NativeArray<DynamicComponentTypeHandle> handles = new NativeArray<DynamicComponentTypeHandle>(_fields.Length, Allocator.Temp);
+            for (int f = 0; f < _handles.Length; f++)
+            {
+                DynamicComponentTypeHandle refreshed = _handles[f];
+                refreshed.Update(ref state);
+                _handles[f] = refreshed;
+            }
 
-            for (int f = 0; f < _fields.Length; f++)
-                handles[f] = state.EntityManager.GetDynamicComponentTypeHandle(_fields[f].Component);
+            _entityHandle.Update(ref state);
 
-            EntityTypeHandle entityHandle = state.GetEntityTypeHandle();
             NativeArray<ArchetypeChunk> chunks = _query.ToArchetypeChunkArray(Allocator.Temp);
 
             foreach (ArchetypeChunk chunk in chunks)
@@ -88,13 +104,13 @@ namespace MyGameDevTools.FixedInput.Entities
                 for (int f = 0; f < _fields.Length; f++)
                 {
                     IntentField field = _fields[f];
-                    DynamicComponentTypeHandle handle = handles[f];
+                    DynamicComponentTypeHandle handle = _handles[f];
 
                     if (!chunk.Has(ref handle))
                         continue;
 
                     NativeArray<byte> raw = chunk.GetDynamicComponentDataArrayReinterpret<byte>(ref handle, field.ComponentSize);
-                    NativeArray<Entity> entities = chunk.GetNativeArray(entityHandle);
+                    NativeArray<Entity> entities = chunk.GetNativeArray(_entityHandle);
 
                     for (int e = 0; e < chunk.Count; e++)
                     {
@@ -119,7 +135,6 @@ namespace MyGameDevTools.FixedInput.Entities
             }
 
             chunks.Dispose();
-            handles.Dispose();
         }
 
         static unsafe FixedInputEvent ReadIntent(NativeArray<byte> raw, int byteOffset)
