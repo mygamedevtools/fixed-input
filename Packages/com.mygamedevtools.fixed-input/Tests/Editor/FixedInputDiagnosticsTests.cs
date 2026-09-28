@@ -7,7 +7,7 @@ namespace MyGameDevTools.FixedInput.Tests
 {
     /// <summary>
     /// The diagnostics exist so that a wrong writer order announces itself instead of producing a
-    /// character that silently ignores input, so what they do and do not report is the behaviour.
+    /// character that silently ignores input, so what they do and do not report is the behavior.
     /// </summary>
     public class FixedInputDiagnosticsTests
     {

@@ -2,7 +2,7 @@ using UnityEngine;
 
 namespace MyGameDevTools.FixedInput.Samples
 {
-    /// <summary>Colours the character while it is attacking.</summary>
+    /// <summary>Colors the character while it is attacking.</summary>
     [AddComponentMenu("Fixed Input/Samples/Demo Body Tint")]
     public class DemoBodyTint : MonoBehaviour
     {
