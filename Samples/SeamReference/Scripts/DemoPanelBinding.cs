@@ -46,7 +46,7 @@ namespace MyGameDevTools.FixedInput.Samples
             _body = GetComponentInParent<DemoBody>();
             _writerSwitch = GetComponentInParent<DemoWriterSwitch>();
             _device = GetComponentInParent<DeviceInputWriter>();
-            _panel = FindFirstObjectByType<InputSurfacePanel>();
+            _panel = FindAnyObjectByType<InputSurfacePanel>();
         }
     }
 }

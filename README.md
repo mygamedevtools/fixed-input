@@ -164,7 +164,8 @@ several steps, so without explicit consumption a buffered attack fires once per 
 
 ## Diagnostics
 
-In the editor and development builds, the failures that are otherwise silent announce themselves.
+In the editor and in any build with `UNITY_ENABLE_CHECKS`, the failures that are otherwise silent
+announce themselves.
 
 Register a surface and any intent nobody consumes is reported by name:
 
@@ -193,7 +194,7 @@ FixedInputDiagnostics.NoteSet(surface, nameof(surface.Attack), tick);
 surface.Attack.Set(tick);
 ```
 
-All of it compiles to nothing outside development builds, and none of it lives inside
+All of it compiles to nothing in a build without `UNITY_ENABLE_CHECKS`, and none of it lives inside
 `FixedInputEvent`.
 
 ## Entities

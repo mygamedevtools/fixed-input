@@ -30,7 +30,7 @@ namespace MyGameDevTools.FixedInput
         {
             get
             {
-#if UNITY_EDITOR || DEVELOPMENT_BUILD
+#if UNITY_EDITOR || UNITY_ENABLE_CHECKS
                 ReportEvictionOnce();
 #endif
                 return Source.Tick;
@@ -76,7 +76,7 @@ namespace MyGameDevTools.FixedInput
             ClearObservers();
         }
 
-#if UNITY_EDITOR || DEVELOPMENT_BUILD
+#if UNITY_EDITOR || UNITY_ENABLE_CHECKS
         static void ReportEvictionOnce()
         {
             if (_source is not PlayerLoopTickSource playerLoop)
