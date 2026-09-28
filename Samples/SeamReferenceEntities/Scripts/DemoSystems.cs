@@ -110,7 +110,7 @@ namespace MyGameDevTools.FixedInput.Samples.Entities
                 toTarget.y = 0f;
                 float distance = math.length(toTarget);
 
-                // Clamped rather than normalised, so it eases off as it arrives instead of
+                // Clamped rather than normalized, so it eases off as it arrives instead of
                 // shuffling across the target at full speed.
                 input.ValueRW.Move = distance < 0.1f
                     ? float2.zero

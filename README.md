@@ -58,7 +58,7 @@ somebody forgets to clear and it fires twice.
 **3. The reader owns execution.** A writer supplies values. It never calls a movement, animation or
 combat API directly.
 
-*Break it and* a different writer driving the same reader produces different behaviour, and the
+*Break it and* a different writer driving the same reader produces different behavior, and the
 surface has stopped being a contract. This is the rule most often broken by accident, because the
 code that computed a direction is right there and moving the character from it is one line.
 
