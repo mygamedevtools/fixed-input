@@ -1,8 +1,20 @@
-# My Fixed Tick
+<p align="center">
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset="docs/img/banner-dark.png">
+    <img src="docs/img/banner-light.png" alt="My Fixed Tick" width="100%">
+  </picture>
+</p>
 
-A deterministic fixed-step tick for Unity, and a one-shot input intent bound to a single step.
+<p align="center">
+  <img src="https://img.shields.io/badge/Unity-6000.0%2B-29A19C?logo=unity" alt="Unity 6000.0+">
+  <a href="LICENSE"><img src="https://img.shields.io/badge/license-MIT-E4572E" alt="License: MIT"></a>
+</p>
 
-```csharp
+## ⚡ Overview
+
+**My Fixed Tick** is a Unity package for a **deterministic fixed-step tick** and a **one-shot input intent** bound to a single step. In a quick example:
+
+```cs
 // A writer, wherever input comes from.
 input.Attack.Set(MyFixedTick.Current);
 
@@ -11,77 +23,75 @@ if (input.Attack.TryConsume(tick))
     Attack();
 ```
 
-An intent is valid for exactly one fixed simulation step and expires by arithmetic. Nothing clears
-it, nothing can consume it twice, and a paused or reloaded game cannot deliver a stale press.
+Instead of:
 
-## Why it is worth having
+```cs
+bool _attackPressed;
 
-The primitive is small. The thing built on it is not.
+void Update()
+{
+    if (Keyboard.current.jKey.wasPressedThisFrame)
+        _attackPressed = true;
+}
 
-Put a project's input vocabulary in a plain type, have every reader read only that, and a character
-driven by a keyboard and the same character driven by a script run the identical code. Every
-mechanic written for a player works for an agent the day it ships, because there is no second path
-to drift out of sync: no parallel agent attack, no agent-only movement, no mechanic that quietly
-works for one of them and not the other.
-
-That property is worth a contract, and the package ships one: six rules, each with the consequence
-of breaking it, plus development-build diagnostics that report a violation by name instead of
-leaving you with a character that mysteriously ignores input.
-
-## Install
-
-Unity 6000.0 or newer. No package dependencies.
-
-**Package Manager → Add package from git URL:**
-
-```
-https://github.com/mygamedevtools/fixed-input.git?path=/Packages/com.mygamedevtools.fixed-input
+void FixedUpdate()
+{
+    if (_attackPressed)
+    {
+        _attackPressed = false;
+        Attack();
+    }
+}
 ```
 
-Or add it to `Packages/manifest.json` directly:
+That flag stays set until something clears it, so a paused or reloaded game delivers a stale press, a second reader never sees it, and the whole thing depends on a script execution order nobody wrote down. An intent is valid for exactly one fixed simulation step and expires by arithmetic: nothing clears it, nothing can consume it twice, and nothing goes stale.
 
-```json
-"com.mygamedevtools.fixed-input": "https://github.com/mygamedevtools/fixed-input.git?path=/Packages/com.mygamedevtools.fixed-input"
-```
+The point is the input surface between writers and readers. Put a project's input vocabulary in a plain type, have every reader read only that, and a character driven by a keyboard and the same character driven by a script run the identical code. Every mechanic written for a player works for an agent the day it ships, because there is no second path to drift out of sync.
 
-## What you get
+## 🚀 Features
 
-- **`FixedInputEvent`**, a one-shot intent with a peek/consume split and per-read buffering windows.
-  Two unmanaged fields, so it works as an `IComponentData` and from Burst-compiled code.
-- **A tick source that installs itself** into the `PlayerLoop` at the end of the fixed phase, so it
-  needs no scene object and no script execution order, and physics callbacks observe the step they
-  are actually in. Swappable, because `ITickSource` is an interface.
-- **Diagnostics** that name an intent nobody consumed and two writers that fought over one field.
-- **A runtime overlay** with a rolling lane per intent, a frame-rate cap and a time scale, so you
-  can prove frame independence rather than assume it.
-- **Optional Entities support**, compiled only when that package is present.
-- **Two samples**, MonoBehaviour and ECS, deliberately identical down to the numbers.
+- **One-Shot Input Intents**: `FixedInputEvent` is valid for one fixed step, with a peek/consume split and per-read buffering windows. Two unmanaged fields, so it works as an `IComponentData` and from Burst-compiled code.
+- **A Tick That Installs Itself**: The default source installs into the `PlayerLoop` at the end of the fixed phase, so it needs no scene object and no script execution order, and physics callbacks observe the step they are actually in.
+- **Swappable Clocks**: `ITickSource` is an interface, so a project can run off a clock it already owns.
+- **Diagnostics That Name The Problem**: Development builds report an intent nobody consumed and two writers that fought over one field, instead of a character that mysteriously ignores input.
+- **Optional Entities Support**: Compiled only when the Entities package is present.
+- **A Sample To Learn From**: One character driven by a keyboard and by a scripted agent through the same input surface, in a MonoBehaviour scene and an Entities scene, with an overlay that shows every intent step by step and lets you cap the frame rate and scale time, so you can prove frame independence rather than assume it.
 
-## Documentation
+## 📦 Installation
 
-The [package README](Packages/com.mygamedevtools.fixed-input/README.md) is the real documentation.
-It covers the [contract](Packages/com.mygamedevtools.fixed-input/README.md#the-contract), what
-[the tick](Packages/com.mygamedevtools.fixed-input/README.md#the-tick) actually means, where
-[latency](Packages/com.mygamedevtools.fixed-input/README.md#latency-and-which-parts-of-it-you-can-remove)
-comes from and which parts of it you can remove, and the
-[diagnostics](Packages/com.mygamedevtools.fixed-input/README.md#diagnostics).
+You can install the package via **Tarball** or **Git**. Either way it needs Unity 6000.0 or newer, and no other packages.
 
-## Repository layout
+#### Tarball (UPM Signed)
 
-This repository is a Unity project that hosts the package, so the samples and tests have somewhere
-to run.
+1. Choose the [release](https://github.com/mygamedevtools/fixed-input/releases) you want to install and download the `com.mygamedevtools.fixed-input-<release>.tgz` asset.
+2. Open `Window/Package Manager`.
+3. Click <kbd>+</kbd>.
+4. Select `Install package from tarball...`.
+5. Select the `com.mygamedevtools.fixed-input-<release>.tgz` file you downloaded.
 
-| Path | |
-|---|---|
-| `Packages/com.mygamedevtools.fixed-input` | the package itself |
-| `Packages/com.mygamedevtools.fixed-input/Samples` | both reference samples |
-| `Packages/com.mygamedevtools.fixed-input/Tests` | 69 tests, edit mode and play mode |
-| `Assets`, `ProjectSettings` | the host project |
+#### Git (UPM Unsigned)
 
-`com.unity.entities` is a development dependency of the host project, not of the package. It is
-there so the optional Entities assembly is compiled and tested; a consumer without Entities installs
-nothing extra and compiles nothing extra.
+1. Open `Window/Package Manager`.
+2. Click <kbd>+</kbd>.
+3. Select `Install package from git URL...`.
+4. Paste `https://github.com/mygamedevtools/fixed-input.git#upm` into url.
+5. Click `Add`.
 
-## License
+To pin a version, use its tag instead of the branch, e.g. `https://github.com/mygamedevtools/fixed-input.git#upm/0.2.0`.
 
-MIT. See [LICENSE.txt](Packages/com.mygamedevtools.fixed-input/LICENSE.txt).
+> [!NOTE]
+> The sample, including its 3D Game Kit art, is not imported with the package. Import **Input Surface Reference** from the package's `Samples` tab in the Package Manager when you want it.
+
+## 📚 Documentation
+
+The detailed documentation lives in the [package README](Packages/com.mygamedevtools.fixed-input/README.md): the [contract](Packages/com.mygamedevtools.fixed-input/README.md#the-contract), what [the tick](Packages/com.mygamedevtools.fixed-input/README.md#the-tick) actually means, where [latency](Packages/com.mygamedevtools.fixed-input/README.md#latency-and-which-parts-of-it-you-can-remove) comes from and which parts of it you can remove, the [diagnostics](Packages/com.mygamedevtools.fixed-input/README.md#diagnostics), and the [sample](Packages/com.mygamedevtools.fixed-input/README.md#samples).
+
+## 🤝 Contributing
+
+We welcome contributions! Please check our [contribution guidelines](./CONTRIBUTING.md).
+
+## 📄 License
+
+This project is licensed under the [MIT License](./LICENSE).
+
+The sample's character and environment art is from Unity's 3D Game Kit and is licensed separately, under the Unity Companion License. See [3D Game Kit License.md](<Packages/com.mygamedevtools.fixed-input/Samples/InputSurfaceReference/3D Game Kit License.md>) and [Third Party Notices.md](<Packages/com.mygamedevtools.fixed-input/Third Party Notices.md>).

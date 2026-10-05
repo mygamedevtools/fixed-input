@@ -1,0 +1,79 @@
+/*
+    The input surface panel in the My Gamedev Tools brand. The panel ships its own neutral look
+    and reads its colors and sizes from --fixed-input-* variables. This sheet is in the panel's
+    Style Sheets list, so :root here is the panel's document, and the variables map to the kit's
+    tokens from the Panel Settings theme.
+*/
+
+:root {
+    --fixed-input-surface: var(--mgt-color-surface);
+    --fixed-input-border: var(--mgt-color-border);
+    --fixed-input-text: var(--mgt-color-text);
+    --fixed-input-text-muted: var(--mgt-color-text-muted);
+    --fixed-input-text-dim: var(--mgt-palette-comment);
+    --fixed-input-fill: rgba(0, 0, 0, 0);
+    --fixed-input-fill-hover: var(--mgt-color-border);
+    --fixed-input-lane-empty: var(--mgt-color-border);
+
+    /* Status colors keep their meaning: armed is caution, consumed is success, lost is an error. */
+    --fixed-input-set: var(--mgt-color-warning);
+    --fixed-input-waiting: var(--mgt-color-warning-border);
+    --fixed-input-consumed: var(--mgt-color-success);
+    --fixed-input-expired: var(--mgt-color-error);
+
+    --fixed-input-pressed: var(--mgt-color-focus);
+    --fixed-input-on-pressed: var(--mgt-color-on-primary);
+    --fixed-input-active: var(--mgt-color-primary);
+    --fixed-input-on-active: var(--mgt-color-on-primary);
+
+    /* The tri-color rule along the top edge, the kit's signature for sample screens. */
+    --fixed-input-accent-1: var(--mgt-color-stripe-1);
+    --fixed-input-accent-2: var(--mgt-color-stripe-2);
+    --fixed-input-accent-3: var(--mgt-color-stripe-3);
+    --fixed-input-accent-height: var(--mgt-stripe-rule);
+
+    /* No border, so the rule runs edge to edge; the raised surface still sets the panel apart. */
+    --fixed-input-border-width: 0px;
+
+    /* Pills need a radius of exactly half their height. */
+    --fixed-input-radius: var(--mgt-radius-md);
+    --fixed-input-control-height: 22px;
+    --fixed-input-control-radius: 11px;
+    --fixed-input-padding-x: 16px;
+    --fixed-input-padding-y: 14px;
+    --fixed-input-cell-gap: 2px;
+
+    --fixed-input-tick-size: 28px;
+    --fixed-input-caption-size: 11px;
+    --fixed-input-caption-spacing: 1px;
+
+    /* Russo One has one weight, and the brand never fakes bold. */
+    --fixed-input-emphasis: normal;
+}
+
+.fixed-input-panel {
+    -unity-font-definition: url("../Scripts/Runtime/MyGamedevToolsUI/Fonts/RethinkSans-Regular.ttf");
+}
+
+/* Display type for the tick, mono for labels, semibold for names and values. */
+.fixed-input-panel__tick {
+    -unity-font-definition: url("../Scripts/Runtime/MyGamedevToolsUI/Fonts/RussoOne-Regular.ttf");
+}
+
+.fixed-input-panel__caption,
+.fixed-input-panel__control-label,
+.fixed-input-panel__chip-label {
+    -unity-font-definition: url("../Scripts/Runtime/MyGamedevToolsUI/Fonts/RedHatMono-Medium.ttf");
+}
+
+.fixed-input-panel__lane-name,
+.fixed-input-panel__value,
+.fixed-input-panel__button {
+    -unity-font-definition: url("../Scripts/Runtime/MyGamedevToolsUI/Fonts/RethinkSans-SemiBold.ttf");
+}
+
+.fixed-input-panel__age,
+.fixed-input-panel__unit,
+.fixed-input-panel__separator {
+    -unity-font-definition: url("../Scripts/Runtime/MyGamedevToolsUI/Fonts/RedHatMono-Regular.ttf");
+}

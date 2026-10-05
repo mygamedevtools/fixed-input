@@ -222,10 +222,65 @@ Two limits worth knowing:
   so there is no supported way to render the nice row there. Authoring components use the normal
   drawer and are unaffected.
 
-## The runtime overlay
+## Inspector
 
-`InputSurfacePanel` is a corner ribbon showing what crosses a surface, step by step. Add it to a
-`UIDocument` and point it at a surface:
+A `FixedInputEvent` field draws as readable state rather than an integer:
+
+```
+Attack     ●  set 3 ticks ago   (window 5)
+Evade      ○  idle
+Jump       ●  pending next step
+```
+
+Outside play mode it shows the stored state instead of an invented age, because no tick is running.
+An intent shown as armed in edit mode means runtime state was serialized into an asset, which is
+worth seeing.
+
+## Samples
+
+**Input Surface Reference** ships two scenes, one MonoBehaviour and one Entities. Open either and
+press play.
+
+- **InputSurfaceReference** — one character, a keyboard writer and a scripted agent writer, and a
+  runtime toggle on Tab. Movement goes through the surface too, so the agent steers without ever
+  touching the mover.
+- **InputSurfaceReferenceEntities** — the same demonstration as ECS systems, deliberately down to
+  the numbers: one character, the same two writers, the same Tab to swap between them, the same
+  speed, buffer, chain window and cooldown. Drive each with its agent and they walk to the same
+  place and attack at the same rate. Requires the Entities package; its scripts live in their own
+  assembly that compiles only when Entities is present, so the rest of the sample works without it.
+
+  The entities create themselves from a system, so there is no subscene to bake, and a
+  presentation component mirrors each one onto an animated GameObject, so the scene needs no
+  Entities Graphics package.
+
+  It also shows the hybrid clock problem being solved rather than described: `DemoEntitiesClock`
+  matches the two timesteps and makes the ECS tick authoritative. Without those two lines the counts
+  drift hundreds of steps apart within a minute, and every age the panel prints is nonsense.
+
+Both use the same character and environment, taken from Unity's
+[3D Game Kit](https://assetstore.unity.com/packages/templates/tutorials/3d-game-kit-115747): Ellen,
+her locomotion, attack and jump animations, a pressure pad as the agent's target, and a ground
+texture. The materials use the built-in Standard shader, so they render in the built-in pipeline as
+they are; import the sample into a URP or HDRP project and it offers to upgrade them.
+
+The animation is presentation only. It reads the body and never feeds back into it, which is why the
+clips' root motion is removed rather than applied: the body moves in fixed steps from the input
+surface, identically for a player and an agent, and an Animator moving it instead would make motion
+depend on which clip happens to be playing. The presentation draws the body one step behind,
+blended between its last two positions so it stays smooth at any frame rate, and feeds the
+Animator the body's measured speed. Each clip is placed in the blend at its authored ground speed,
+so the feet move with the ground rather than sliding across it.
+
+That art is licensed under the
+[Unity Companion License](<Samples/InputSurfaceReference/3D Game Kit License.md>), not MIT. It can
+be used in connection with Unity, which is the only place a sample runs anyway.
+
+### The overlay
+
+Both scenes carry `InputSurfacePanel`, a corner ribbon showing what crosses a surface, step by
+step. It's part of the sample, not the package, so copy it from `Scripts/Runtime` to use it in a
+project of your own. Add it to a `UIDocument` and point it at a surface:
 
 ```csharp
 panel.Watch(characterInput);
@@ -271,41 +326,13 @@ panel.SampleOnStepClosing = false;   // then call panel.SampleNow(tick) where th
 Sampling from the wrong phase reads the surface either side of the step that changed it, which
 shows every intent exactly one step late.
 
-## Inspector
-
-A `FixedInputEvent` field draws as readable state rather than an integer:
-
-```
-Attack     ●  set 3 ticks ago   (window 5)
-Evade      ○  idle
-Jump       ●  pending next step
-```
-
-Outside play mode it shows the stored state instead of an invented age, because no tick is running.
-An intent shown as armed in edit mode means runtime state was serialized into an asset, which is
-worth seeing.
-
-## Samples
-
-Each ships a scene. Open it and press play.
-
-Both carry the runtime panel, so the same overlay renders a MonoBehaviour game and an ECS one.
-
-- **Input Surface Reference** — one character, a keyboard writer and a scripted agent writer, and a
-  runtime toggle on Tab. Movement goes through the surface too, so the agent steers without ever
-  touching the mover.
-- **Input Surface Reference (Entities)** — the same demonstration as ECS systems, deliberately down
-  to the numbers: one character, the same two writers, the same Tab to swap between them, the same
-  speed, buffer, chain window and cooldown. Drive each with its agent and they walk to the same
-  place and attack at the same rate. Requires the Entities package.
-
-  Entities have no visual without the Entities Graphics package, which is a lot of apparatus for a
-  sample about input, so the panel is the sample's only output. The entities create themselves from
-  a system, so there is no subscene to bake.
-
-  It also shows the hybrid clock problem being solved rather than described: `DemoEntitiesClock`
-  matches the two timesteps and makes the ECS tick authoritative. Without those two lines the counts
-  drift hundreds of steps apart within a minute, and every age the panel prints is nonsense.
+**Its look** comes from `UI/InputSurfacePanel.uss`, assigned to its **Style Sheet** field, and
+every color and size there is a `--fixed-input-*` variable with a fallback. Sheets in its **Style
+Sheets** list restyle it by setting those variables on `:root`. In the sample,
+`UI/InputSurfacePanelBrand.uss` does that to give it the My Gamedev Tools brand, from the brand's UI
+kit that ships inside the sample, and the scenes' Panel Settings use the kit's theme. A Panel
+Settings theme can't set the variables itself: a theme's variables don't reach a sheet attached to
+the document.
 
 ## Requirements
 

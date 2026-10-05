@@ -1,0 +1,270 @@
+/*
+    The overlay's look. InputSurfacePanel attaches this sheet, from its Style Sheet field, to its
+    document, so it works with any Panel Settings.
+
+    To restyle it, add a style sheet to the panel's Style Sheets list and declare any of the
+    --fixed-input-* variables below on :root there. Every variable falls back to the default look.
+    A Panel Settings theme can't set them, since a theme's variables don't reach a sheet attached
+    to the document. Fonts are never set here, so a theme or a sheet can set them freely.
+
+    Colors: surface, border, text, text-muted, text-dim, fill, fill-hover, lane-empty, set,
+    waiting, consumed, expired, pressed, on-pressed, active, on-active, accent-1, accent-2,
+    accent-3.
+    Sizes: border-width, radius, control-radius, control-height, padding-x, padding-y, tick-size,
+    caption-size, caption-spacing, cell-gap, accent-height. The accent is a three-part bar along
+    the panel's top edge, hidden at its default height of 0.
+    Type: emphasis, the font style of the tick and key caps.
+*/
+
+.fixed-input-panel {
+    position: absolute;
+    left: 20px;
+    top: 20px;
+    max-width: 92%;
+    padding-left: var(--fixed-input-padding-x, 14px);
+    padding-right: var(--fixed-input-padding-x, 14px);
+    padding-top: var(--fixed-input-padding-y, 11px);
+    padding-bottom: var(--fixed-input-padding-y, 11px);
+    background-color: var(--fixed-input-surface, rgba(9, 12, 18, 0.95));
+    border-width: var(--fixed-input-border-width, 1px);
+    border-color: var(--fixed-input-border, rgba(150, 170, 205, 0.30));
+    border-radius: var(--fixed-input-radius, 5px);
+    overflow: hidden;
+}
+
+/* Header ---------------------------------------------------------------------- */
+
+.fixed-input-panel__header {
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 8px;
+}
+
+.fixed-input-panel__tick-group {
+    flex-direction: row;
+    align-items: flex-end;
+}
+
+.fixed-input-panel__caption {
+    font-size: var(--fixed-input-caption-size, 12px);
+    letter-spacing: var(--fixed-input-caption-spacing, 1.5px);
+    color: var(--fixed-input-text-muted, rgb(185, 194, 210));
+    margin: 0 7px 3px 0;
+}
+
+.fixed-input-panel__tick {
+    font-size: var(--fixed-input-tick-size, 26px);
+    -unity-font-style: var(--fixed-input-emphasis, bold);
+    color: var(--fixed-input-text, rgb(238, 241, 246));
+}
+
+.fixed-input-panel__chips {
+    flex-direction: row;
+}
+
+.fixed-input-panel__chip {
+    min-width: 26px;
+    height: var(--fixed-input-control-height, 22px);
+    margin-left: 4px;
+    padding: 0 6px;
+    align-items: center;
+    justify-content: center;
+    background-color: var(--fixed-input-fill, rgba(150, 175, 215, 0.17));
+    border-width: 1px;
+    border-color: var(--fixed-input-border, rgba(150, 170, 205, 0.30));
+    border-radius: var(--fixed-input-control-radius, 3px);
+}
+
+.fixed-input-panel__chip-label {
+    margin: 0;
+    padding: 0;
+    -unity-text-align: middle-center;
+    font-size: 13px;
+    -unity-font-style: var(--fixed-input-emphasis, bold);
+    color: var(--fixed-input-text, rgb(238, 241, 246));
+}
+
+.fixed-input-panel__chip--down {
+    background-color: var(--fixed-input-pressed, rgb(143, 162, 242));
+}
+
+.fixed-input-panel__chip--down > .fixed-input-panel__chip-label {
+    color: var(--fixed-input-on-pressed, rgb(11, 13, 18));
+}
+
+/* Along the panel's top edge, inside its border. The panel clips it to its rounded corners, so
+   with a border width of 0 it runs edge to edge. */
+.fixed-input-panel__accent {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    flex-direction: row;
+    height: var(--fixed-input-accent-height, 0px);
+}
+
+.fixed-input-panel__accent-segment {
+    flex-grow: 1;
+    background-color: var(--fixed-input-accent-1, rgb(244, 169, 58));
+}
+
+.fixed-input-panel__accent-segment--2 {
+    background-color: var(--fixed-input-accent-2, rgb(244, 169, 58));
+}
+
+.fixed-input-panel__accent-segment--3 {
+    background-color: var(--fixed-input-accent-3, rgb(244, 169, 58));
+}
+
+/* Lanes ----------------------------------------------------------------------- */
+
+.fixed-input-panel__lane {
+    flex-direction: row;
+    align-items: center;
+    margin-bottom: 4px;
+}
+
+.fixed-input-panel__lane-name {
+    width: 74px;
+    flex-shrink: 0;
+    font-size: 14px;
+    color: var(--fixed-input-text, rgb(238, 241, 246));
+}
+
+.fixed-input-panel__strip {
+    flex-direction: row;
+    flex-grow: 1;
+    height: 15px;
+}
+
+.fixed-input-panel__cell {
+    flex-grow: 1;
+    margin-right: var(--fixed-input-cell-gap, 1px);
+    background-color: var(--fixed-input-lane-empty, rgba(150, 175, 215, 0.08));
+    border-top-width: 0;
+    border-top-color: var(--fixed-input-set, rgb(244, 169, 58));
+}
+
+.fixed-input-panel__cell--set {
+    background-color: var(--fixed-input-set, rgb(244, 169, 58));
+}
+
+.fixed-input-panel__cell--waiting {
+    background-color: var(--fixed-input-waiting, rgba(244, 169, 58, 0.32));
+}
+
+.fixed-input-panel__cell--consumed {
+    background-color: var(--fixed-input-consumed, rgb(53, 194, 165));
+}
+
+/* Set and consumed inside one step: a consume with a cap in the set color, so it reads apart
+   from a consume of something set earlier. */
+.fixed-input-panel__cell--set-and-consumed {
+    background-color: var(--fixed-input-consumed, rgb(53, 194, 165));
+    border-top-width: 4px;
+}
+
+.fixed-input-panel__cell--expired {
+    background-color: var(--fixed-input-expired, rgb(232, 93, 106));
+}
+
+.fixed-input-panel__age {
+    width: 40px;
+    flex-shrink: 0;
+    margin-left: 8px;
+    font-size: 13px;
+    -unity-text-align: middle-right;
+    color: var(--fixed-input-text-muted, rgb(185, 194, 210));
+}
+
+.fixed-input-panel__age--idle {
+    color: var(--fixed-input-text-dim, rgb(139, 149, 167));
+}
+
+.fixed-input-panel__age--armed {
+    color: var(--fixed-input-set, rgb(244, 169, 58));
+}
+
+.fixed-input-panel__age--lost {
+    color: var(--fixed-input-expired, rgb(232, 93, 106));
+}
+
+/* Frame strip ------------------------------------------------------------------ */
+
+.fixed-input-panel__rule {
+    height: 1px;
+    margin: 7px 0 8px 0;
+    background-color: var(--fixed-input-border, rgba(150, 170, 205, 0.30));
+}
+
+.fixed-input-panel__frame-row {
+    flex-direction: row;
+    align-items: center;
+}
+
+.fixed-input-panel__value {
+    font-size: 14px;
+    color: var(--fixed-input-text, rgb(238, 241, 246));
+}
+
+.fixed-input-panel__unit {
+    margin-left: 3px;
+    font-size: 12px;
+    color: var(--fixed-input-text-muted, rgb(185, 194, 210));
+}
+
+.fixed-input-panel__separator {
+    margin: 0 7px;
+    font-size: 12px;
+    color: var(--fixed-input-text-dim, rgb(139, 149, 167));
+}
+
+.fixed-input-panel__value--busy,
+.fixed-input-panel__unit--busy {
+    color: var(--fixed-input-set, rgb(244, 169, 58));
+}
+
+/* Controls ------------------------------------------------------------------- */
+
+.fixed-input-panel__controls {
+    flex-direction: row;
+    flex-wrap: wrap;
+    align-items: center;
+    margin-top: 8px;
+}
+
+.fixed-input-panel__control-label {
+    margin-right: 5px;
+    font-size: var(--fixed-input-caption-size, 11px);
+    letter-spacing: var(--fixed-input-caption-spacing, 1.3px);
+    color: var(--fixed-input-text-muted, rgb(185, 194, 210));
+}
+
+.fixed-input-panel__control-label--spaced {
+    margin-left: 10px;
+}
+
+.fixed-input-panel__button {
+    min-width: 30px;
+    height: var(--fixed-input-control-height, 22px);
+    margin: 0 3px 0 0;
+    padding: 0 7px;
+    font-size: 13px;
+    color: var(--fixed-input-text, rgb(238, 241, 246));
+    background-color: var(--fixed-input-fill, rgba(150, 175, 215, 0.17));
+    border-width: 1px;
+    border-color: var(--fixed-input-border, rgba(150, 170, 205, 0.30));
+    border-radius: var(--fixed-input-control-radius, 3px);
+}
+
+.fixed-input-panel__button:hover {
+    background-color: var(--fixed-input-fill-hover, rgba(150, 175, 215, 0.28));
+}
+
+.fixed-input-panel__button--active,
+.fixed-input-panel__button--active:hover {
+    color: var(--fixed-input-on-active, rgb(11, 13, 18));
+    background-color: var(--fixed-input-active, rgb(244, 169, 58));
+    border-color: var(--fixed-input-active, rgb(244, 169, 58));
+}

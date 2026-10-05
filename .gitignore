@@ -119,3 +119,7 @@ InitTestScene*.unity*
 
 # Scratch helpers used to drive the editor from the CLI while building this package
 /AgentScripts/
+
+# Temporary staging for importing third-party art; never committed
+/Assets/_Stage3DGameKit/
+/Assets/_Stage3DGameKit.meta

@@ -1,0 +1,21 @@
+name: 🚀 Release (Preview)
+on:
+  workflow_dispatch:
+    inputs:
+      bumpType:
+        description: 'Version bump type'
+        required: true
+        type: choice
+        options:
+          - patch
+          - minor
+          - major
+
+jobs:
+  create-preview-release:
+    name: Preview Release
+    uses: mygamedevtools/unity-package-ci/.github/workflows/versioning-manual.yml@v1
+    with:
+      bumpType: ${{ inputs.bumpType }}
+      package-path: Packages/com.mygamedevtools.fixed-input
+    secrets: inherit
