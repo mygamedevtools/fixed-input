@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.1.1](https://github.com/mygamedevtools/fixed-input/compare/0.1.0...0.1.1) (2026-10-05)
+
+
+### Bug Fixes
+
+* use a dynamic body for the physics tick probe ([978e30d](https://github.com/mygamedevtools/fixed-input/commit/978e30d6612331f0f50c1650101191dae0e0ac3d))
+
 # 0.1.0 (2026-10-01)
 
 First release.
