@@ -81,9 +81,11 @@ namespace MyGameDevTools.FixedInput.Tests
             PhysicsTickProbe probe = Spawn<PhysicsTickProbe>("Probe");
             BoxCollider probeCollider = probe.gameObject.AddComponent<BoxCollider>();
             probeCollider.isTrigger = true;
+            // Dynamic, not kinematic: under the default contact pairs mode, Unity 6000.0 and 6000.3
+            // report no trigger events between a kinematic body and a static collider.
             Rigidbody body = probe.gameObject.AddComponent<Rigidbody>();
-            body.isKinematic = true;
             body.useGravity = false;
+            body.constraints = RigidbodyConstraints.FreezeAll;
 
             // Spawned overlapping, so the trigger fires on the first physics step that runs.
             BoxCollider other = Spawn<BoxCollider>("Other");
