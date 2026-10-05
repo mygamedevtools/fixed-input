@@ -1,0 +1,39 @@
+{
+    "name": "Sample.FixedInput.Editor",
+    "rootNamespace": "MyGameDevTools.FixedInput.Samples.Editor",
+    "references": [
+        "Unity.RenderPipelines.Core.Editor",
+        "Unity.RenderPipelines.Core.Runtime",
+        "Unity.RenderPipelines.Universal.Editor",
+        "Unity.RenderPipelines.Universal.Runtime",
+        "Unity.RenderPipelines.HighDefinition.Editor",
+        "Unity.RenderPipelines.HighDefinition.Runtime"
+    ],
+    "includePlatforms": [
+        "Editor"
+    ],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [
+        {
+            "name": "com.unity.render-pipelines.core",
+            "expression": "12.1",
+            "define": "CONVERT_MATERIALS"
+        },
+        {
+            "name": "com.unity.render-pipelines.high-definition",
+            "expression": "12.1",
+            "define": "CONVERT_HDRP"
+        },
+        {
+            "name": "com.unity.render-pipelines.universal",
+            "expression": "12.1",
+            "define": "CONVERT_URP"
+        }
+    ],
+    "noEngineReferences": false
+}

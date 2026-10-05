@@ -17,17 +17,15 @@
     "url": "https://github.com/mygamedevtools"
   },
   "license": "MIT",
+  "documentationUrl": "https://github.com/mygamedevtools/fixed-input/blob/main/Packages/com.mygamedevtools.fixed-input/README.md",
+  "licensesUrl": "https://github.com/mygamedevtools/fixed-input?tab=MIT-1-ov-file",
+  "changelogUrl": "https://github.com/mygamedevtools/fixed-input/blob/main/CHANGELOG.md",
   "hideInEditor": false,
   "samples": [
     {
       "displayName": "Input Surface Reference",
-      "description": "One character driven by a device and by a scripted agent through the same input surface, movement included. A runtime toggle swaps the writer and the reader never notices.",
-      "path": "Samples/SeamReference"
-    },
-    {
-      "displayName": "Input Surface Reference (Entities)",
-      "description": "The same demonstration in ECS: one reader system, a device writer and an agent writer, all through one IComponentData input surface. Requires the Entities package.",
-      "path": "Samples/SeamReferenceEntities"
+      "description": "One character driven by a keyboard and by a scripted agent through the same input surface, movement included; Tab swaps the writer and the reader never notices. Two scenes, MonoBehaviour and Entities, identical down to the numbers. The Entities scene needs the Entities package. Materials upgrade to URP or HDRP on import.",
+      "path": "Samples/InputSurfaceReference"
     }
   ]
 }
