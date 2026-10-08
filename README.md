@@ -7,7 +7,15 @@
 
 <p align="center">
   <img src="https://img.shields.io/badge/Unity-6000.0%2B-29A19C?logo=unity" alt="Unity 6000.0+">
-  <a href="LICENSE"><img src="https://img.shields.io/badge/license-MIT-E4572E" alt="License: MIT"></a>
+  <a href="LICENSE"><img src="https://img.shields.io/github/license/mygamedevtools/fixed-input?color=E4572E" alt="License"></a>
+  <a href="https://github.com/mygamedevtools/fixed-input/releases/latest"><img src="https://img.shields.io/github/v/release/mygamedevtools/fixed-input?color=F3A712&sort=semver" alt="Latest release"></a>
+</p>
+
+<p align="center">
+  <a href="https://codecov.io/github/mygamedevtools/fixed-input"><img src="https://codecov.io/github/mygamedevtools/fixed-input/branch/main/graph/badge.svg" alt="Coverage"></a>
+  <a href="https://github.com/mygamedevtools/fixed-input/actions/workflows/test.yml"><img src="https://github.com/mygamedevtools/fixed-input/actions/workflows/test.yml/badge.svg" alt="Tests"></a>
+  <a href="https://github.com/mygamedevtools/fixed-input/actions/workflows/release.yml"><img src="https://github.com/mygamedevtools/fixed-input/actions/workflows/release.yml/badge.svg" alt="Release"></a>
+  <a href="https://github.com/semantic-release/semantic-release"><img src="https://img.shields.io/badge/semantic--release-angular-e10079?logo=semantic-release" alt="semantic-release"></a>
 </p>
 
 ## ⚡ Overview
