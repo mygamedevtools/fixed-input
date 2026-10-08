@@ -86,6 +86,14 @@ Keep `m_LayerCollisionMatrix` in `ProjectSettings/DynamicsManager.asset` as a pl
 
 Run the tests from `Window > General > Test Runner`, in both `EditMode` and `PlayMode`.
 
+## Signed release archives
+
+Both release workflows call `PackageExporter.ExportPackage` through the shared CI's `unitypackage-export-method` input. The exporter lives in `Assets/Editor`, outside the distributed package. It writes `com.mygamedevtools.fixed-input-<version>.unitypackage` to the project root, signed for My GameDev Tools. CI supplies the organization from the existing `UNITY_ORG_ID` secret through `-unityPackageOrganizationId`. Local exports can set the `UNITY_ORG_ID` environment variable before starting the Editor. Missing organization configuration fails the export. Authentication comes from the signed-in Editor, whose account must have permission to sign for the configured organization.
+
+Exporting requires Unity 6.6 or newer. Files are collected from disk so hidden `Samples~` content is included. Local `Samples` paths and the exported manifest are mapped to `Samples~` without changing the source project; the exporter also accepts an already-renamed `Samples~` layout. The workflows set `unitypackage-rename-samples: false` so host sample tests can compile before export. This requires the matching input in `unity-package-ci@v1` to be released first. Asset GUIDs and metadata are preserved.
+
+Unity's signing APIs are internal and accessed through reflection. A missing API, signing failure, or absent attestation fails the export before the final archive is written. When upgrading the export editor, check the archive's signature and contents, import it into a clean project, and import its sample through Package Manager. The exporter does not require Asset Store Tools.
+
 ## Code of Conduct
 
 By contributing to this project, you agree to adhere to our [Code of Conduct](https://github.com/mygamedevtools/.github/blob/main/CODE_OF_CONDUCT.md). Please treat everyone with respect and kindness.

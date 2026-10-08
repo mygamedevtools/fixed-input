@@ -18,4 +18,6 @@ jobs:
     with:
       bumpType: ${{ inputs.bumpType }}
       package-path: Packages/com.mygamedevtools.fixed-input
+      unitypackage-export-method: PackageExporter.ExportPackage
+      unitypackage-rename-samples: false
     secrets: inherit
