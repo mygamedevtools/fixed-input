@@ -34,5 +34,5 @@ jobs:
     name: Tests
     uses: mygamedevtools/unity-package-ci/.github/workflows/test.yml@v1
     with:
-      coverage-assemblies: '+MyGameDevTools.FixedInput,+MyGameDevTools.FixedInput.Editor,+MyGameDevTools.FixedInput.Entities'
+      coverage-assemblies: '+MyGameDevTools.FixedInput,+MyGameDevTools.FixedInput.Entities'
     secrets: inherit
