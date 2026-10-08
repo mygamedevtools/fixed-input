@@ -15,30 +15,43 @@ using UnityEngine;
 /// <summary>Release tooling, outside the package shipped to consumers.</summary>
 public static class PackageExporter
 {
-    const string PackageName = "com.mygamedevtools.fixed-input";
     static readonly Regex MetaGuid = new Regex(@"^guid: ([0-9a-fA-F]{32})\s*$", RegexOptions.Multiline);
 
     /// <summary>Entry point used by unity-package-ci's unitypackage-export-method.</summary>
     public static void ExportPackage()
     {
-        var organizationId = ReadOrganizationId(Environment.GetCommandLineArgs(), Environment.GetEnvironmentVariable("UNITY_ORG_ID"));
-        var packagePath = "Packages/" + PackageName;
-        var manifest = JObject.Parse(File.ReadAllText(packagePath + "/package.json"));
-        Export(packagePath, Path.GetFullPath($"{PackageName}-{manifest["version"]}.unitypackage"), organizationId);
+        var arguments = Environment.GetCommandLineArgs();
+        var organizationId = ReadSetting(arguments, "-unityPackageOrganizationId", "UNITY_ORG_ID");
+        var packagePath = ReadSetting(arguments, "-unityPackagePath", "PACKAGE_PATH");
+        var manifest = ReadManifest(packagePath);
+        Export(packagePath, Path.GetFullPath($"{manifest["name"]}-{manifest["version"]}.unitypackage"), organizationId);
     }
 
-    static string ReadOrganizationId(string[] arguments, string environmentValue)
+    static string ReadSetting(string[] arguments, string option, string environmentName)
     {
         // GameCI v4 passes customParameters into its container; arbitrary env vars are not forwarded.
         for (int i = 0; i < arguments.Length; i++)
         {
-            if (arguments[i] != "-unityPackageOrganizationId") continue;
+            if (arguments[i] != option) continue;
             if (i + 1 >= arguments.Length || string.IsNullOrWhiteSpace(arguments[i + 1]) || arguments[i + 1].StartsWith("-"))
-                throw new ArgumentException("-unityPackageOrganizationId requires a value.");
+                throw new ArgumentException($"{option} requires a value.");
             return arguments[i + 1].Trim();
         }
+        var environmentValue = Environment.GetEnvironmentVariable(environmentName);
         if (!string.IsNullOrWhiteSpace(environmentValue)) return environmentValue.Trim();
-        throw new InvalidOperationException("Set UNITY_ORG_ID or pass -unityPackageOrganizationId to select the signing organization.");
+        throw new InvalidOperationException($"Set {environmentName} or pass {option} to configure the export.");
+    }
+
+    static JObject ReadManifest(string packagePath)
+    {
+        var manifest = JObject.Parse(File.ReadAllText(Path.Combine(packagePath, "package.json")));
+        // These fields become filesystem paths; reject missing or unsafe filename components.
+        if (manifest["name"]?.Type != JTokenType.String ||
+            !Regex.IsMatch((string)manifest["name"], @"\A[a-z0-9][a-z0-9._-]*\z") ||
+            manifest["version"]?.Type != JTokenType.String ||
+            !Regex.IsMatch((string)manifest["version"], @"\A[0-9A-Za-z][0-9A-Za-z.+-]*\z"))
+            throw new InvalidDataException("The package manifest must declare a valid name and version.");
+        return manifest;
     }
 
     public static void Export(string packagePath, string outputPath, string organizationId)
@@ -46,20 +59,17 @@ public static class PackageExporter
         if (string.IsNullOrWhiteSpace(organizationId))
             throw new ArgumentException("A signing organization is required.", nameof(organizationId));
 
-        packagePath = packagePath.Replace('\\', '/').TrimEnd('/');
-        if (packagePath != "Packages/" + PackageName)
-            throw new ArgumentException($"Expected Packages/{PackageName}.", nameof(packagePath));
+        packagePath = Path.GetFullPath(packagePath).Replace('\\', '/').TrimEnd('/');
         if (Directory.Exists(packagePath + "/Samples") && Directory.Exists(packagePath + "/Samples~"))
             throw new InvalidOperationException("Both Samples and Samples~ exist; refusing an ambiguous export.");
 
-        var manifest = JObject.Parse(File.ReadAllText(packagePath + "/package.json"));
-        if ((string)manifest["name"] != PackageName || string.IsNullOrWhiteSpace((string)manifest["version"]))
-            throw new InvalidOperationException("The package manifest must declare the expected name and a version.");
+        var manifest = ReadManifest(packagePath);
+        var archiveRoot = "Packages/" + (string)manifest["name"];
         if (manifest["samples"] is JArray samples)
             foreach (var sample in samples)
                 sample["path"] = HideSamples((string)sample["path"]);
 
-        var temp = Path.Combine(Path.GetTempPath(), "fixed-input-export-" + Guid.NewGuid().ToString("N"));
+        var temp = Path.Combine(Path.GetTempPath(), "unity-package-export-" + Guid.NewGuid().ToString("N"));
         var staging = Path.Combine(temp, "contents");
         Directory.CreateDirectory(staging);
         try
@@ -67,14 +77,14 @@ public static class PackageExporter
             // Work from disk: the AssetDatabase deliberately excludes Samples~.
             // Rename only archive paths, leaving the development project untouched.
             var guids = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
-            Stage(packagePath, packagePath, staging, guids, null);
+            Stage(packagePath, packagePath, archiveRoot, staging, guids, null);
             foreach (var path in Directory.GetDirectories(packagePath, "*", SearchOption.AllDirectories))
-                Stage(path, packagePath, staging, guids, null);
+                Stage(path, packagePath, archiveRoot, staging, guids, null);
             foreach (var path in Directory.GetFiles(packagePath, "*", SearchOption.AllDirectories))
             {
                 if (path.EndsWith(".meta", StringComparison.OrdinalIgnoreCase) || Path.GetFileName(path) == ".DS_Store")
                     continue;
-                Stage(path, packagePath, staging, guids,
+                Stage(path, packagePath, archiveRoot, staging, guids,
                     path.Replace('\\', '/') == packagePath + "/package.json" ? manifest.ToString() + "\n" : null);
             }
 
@@ -99,7 +109,7 @@ public static class PackageExporter
             ? "Samples~/" + path.Substring("Samples/".Length) : path;
     }
 
-    static void Stage(string path, string packagePath, string staging, Dictionary<string, string> guids, string contents)
+    static void Stage(string path, string packagePath, string archiveRoot, string staging, Dictionary<string, string> guids, string contents)
     {
         path = path.Replace('\\', '/');
         var metaPath = path + ".meta";
@@ -122,7 +132,7 @@ public static class PackageExporter
         var destination = Path.Combine(staging, guid);
         Directory.CreateDirectory(destination);
         var relative = path == packagePath ? "" : path.Substring(packagePath.Length + 1);
-        var archivePath = relative.Length == 0 ? packagePath : packagePath + "/" + HideSamples(relative);
+        var archivePath = relative.Length == 0 ? archiveRoot : archiveRoot + "/" + HideSamples(relative);
         File.WriteAllText(Path.Combine(destination, "pathname"), archivePath, new UTF8Encoding(false));
         if (contents != null)
             File.WriteAllText(Path.Combine(destination, "asset"), contents, new UTF8Encoding(false));
