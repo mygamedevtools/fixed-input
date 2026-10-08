@@ -78,37 +78,23 @@ namespace MyGameDevTools.FixedInput.Tests
         public IEnumerator PhysicsCallbacksObserveTheStepTheyAreIn()
         {
             // This is the property the install position exists for.
+            PhysicsTickProbe probe = Spawn<PhysicsTickProbe>("Probe");
+            BoxCollider probeCollider = probe.gameObject.AddComponent<BoxCollider>();
+            probeCollider.isTrigger = true;
+            Rigidbody body = probe.gameObject.AddComponent<Rigidbody>();
+            body.isKinematic = true;
+            body.useGravity = false;
 
-            // Unity 6.6 saves the layer collision matrix in a format 6000.0 and 6000.3 can't read,
-            // and they load this project with no layer colliding with any other. Turn the Default
-            // layer on for this test instead of depending on the project's physics settings.
-            bool defaultLayerIgnored = Physics.GetIgnoreLayerCollision(0, 0);
-            Physics.IgnoreLayerCollision(0, 0, false);
+            // Spawned overlapping, so the trigger fires on the first physics step that runs.
+            BoxCollider other = Spawn<BoxCollider>("Other");
+            other.transform.position = probe.transform.position;
 
-            try
-            {
-                PhysicsTickProbe probe = Spawn<PhysicsTickProbe>("Probe");
-                BoxCollider probeCollider = probe.gameObject.AddComponent<BoxCollider>();
-                probeCollider.isTrigger = true;
-                Rigidbody body = probe.gameObject.AddComponent<Rigidbody>();
-                body.useGravity = false;
-                body.constraints = RigidbodyConstraints.FreezeAll;
+            for (int step = 0; step < 10 && !probe.TriggerFired; step++)
+                yield return new WaitForFixedUpdate();
 
-                // Spawned overlapping, so the trigger fires on the first physics step that runs.
-                BoxCollider other = Spawn<BoxCollider>("Other");
-                other.transform.position = probe.transform.position;
-
-                for (int step = 0; step < 10 && !probe.TriggerFired; step++)
-                    yield return new WaitForFixedUpdate();
-
-                Assert.IsTrue(probe.TriggerFired, "The trigger never fired, so this test proved nothing.");
-                Assert.AreEqual(probe.FixedUpdateTick, probe.TriggerTick,
-                    "A physics callback during a step must read the same tick as a FixedUpdate writer in that step.");
-            }
-            finally
-            {
-                Physics.IgnoreLayerCollision(0, 0, defaultLayerIgnored);
-            }
+            Assert.IsTrue(probe.TriggerFired, "The trigger never fired, so this test proved nothing.");
+            Assert.AreEqual(probe.FixedUpdateTick, probe.TriggerTick,
+                "A physics callback during a step must read the same tick as a FixedUpdate writer in that step.");
         }
 
         [UnityTest]

@@ -82,6 +82,8 @@ This repository is a Unity project that hosts the package, so the sample and tes
 
 The host project uses the built-in render pipeline, so the sample renders exactly as it ships. The Universal Render Pipeline package stays installed only so the sample's material converter compiles.
 
+Keep `m_LayerCollisionMatrix` in `ProjectSettings/DynamicsManager.asset` as a plain hex string. Saving the physics settings in Unity 6.6 rewrites it as `{_typeName: unsigned int, _data: …}`, which Unity 6000.0 and 6000.3 can't read: they load the project with no layer colliding, and the physics tests fail there. If it changes, restore the hex string before committing.
+
 Run the tests from `Window > General > Test Runner`, in both `EditMode` and `PlayMode`.
 
 ## Code of Conduct
