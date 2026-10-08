@@ -7,8 +7,9 @@
 
 <p align="center">
   <img src="https://img.shields.io/badge/Unity-6000.0%2B-29A19C?logo=unity" alt="Unity 6000.0+">
-  <a href="LICENSE"><img src="https://img.shields.io/github/license/mygamedevtools/fixed-input?color=E4572E" alt="License"></a>
-  <a href="https://github.com/mygamedevtools/fixed-input/releases/latest"><img src="https://img.shields.io/github/v/release/mygamedevtools/fixed-input?color=F3A712&sort=semver" alt="Latest release"></a>
+  <a href="LICENSE"><img src="https://img.shields.io/github/license/mygamedevtools/fixed-input?color=29A19C" alt="License"></a>
+  <a href="https://github.com/mygamedevtools/fixed-input/releases/latest"><img src="https://img.shields.io/github/v/release/mygamedevtools/fixed-input?color=29A19C&amp;sort=semver" alt="Latest release"></a>
+  <a href="https://openupm.com/packages/com.mygamedevtools.fixed-input/"><img src="https://img.shields.io/npm/v/com.mygamedevtools.fixed-input?label=OpenUPM&amp;registry_uri=https%3A%2F%2Fpackage.openupm.com&amp;color=29A19C" alt="OpenUPM version"></a>
 </p>
 
 <p align="center">
