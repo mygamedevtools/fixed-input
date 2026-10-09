@@ -68,7 +68,7 @@ The point is the input surface between writers and readers. Put a project's inpu
 
 ## 📦 Installation
 
-You can install the package via **Tarball** or **Git**. Either way it needs Unity 6000.0 or newer, and no other packages.
+You can install the package via **Tarball**, **Unity Package**, or **Git**. It needs Unity 6000.0 or newer, and no other packages.
 
 #### Tarball (UPM Signed)
 
@@ -77,6 +77,10 @@ You can install the package via **Tarball** or **Git**. Either way it needs Unit
 3. Click <kbd>+</kbd>.
 4. Select `Install package from tarball...`.
 5. Select the `com.mygamedevtools.fixed-input-<release>.tgz` file you downloaded.
+
+#### Unity Package (Unsigned)
+
+Download the `com.mygamedevtools.fixed-input.unitypackage` asset from a release that includes it, then open it in Unity or use `Assets > Import Package > Custom Package`. It installs as an embedded package under `Packages/com.mygamedevtools.fixed-input`. Samples remain optional in Package Manager. This archive is unsigned; use the signed UPM tarball if you need a signed download.
 
 #### Git (UPM Unsigned)
 
