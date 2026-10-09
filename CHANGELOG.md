@@ -1,5 +1,12 @@
 # Changelog
 
+# [0.2.0](https://github.com/mygamedevtools/fixed-input/compare/0.1.1...0.2.0) (2026-10-09)
+
+
+### Features
+
+* attach unsigned unitypackages using Asset Store Tools ([#6](https://github.com/mygamedevtools/fixed-input/issues/6)) ([5fc337f](https://github.com/mygamedevtools/fixed-input/commit/5fc337f33127560dc3bc6259d7da024b120c054a))
+
 ## [0.1.1](https://github.com/mygamedevtools/fixed-input/compare/0.1.0...0.1.1) (2026-10-05)
 
 

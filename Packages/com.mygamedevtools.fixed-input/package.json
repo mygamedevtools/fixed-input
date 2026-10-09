@@ -1,6 +1,6 @@
 {
   "name": "com.mygamedevtools.fixed-input",
-  "version": "0.1.1",
+  "version": "0.2.0",
   "displayName": "My Fixed Tick",
   "description": "A deterministic fixed-step tick and a one-shot input intent bound to a single step.\n\nAn intent is valid for exactly one fixed simulation step and expires by arithmetic. Nothing clears it, nothing consumes it twice, and a paused or reloaded game cannot deliver a stale press:\n\n┃ if (input.Attack.TryConsume(tick))\n┃     Attack();\n\nThe point is the input surface between them. A device writer and a scripted agent fill the same struct, and whatever reads it cannot tell which one is live, so every mechanic written for a player works for an agent the day it ships.\n\n▪ A tick source that installs into the PlayerLoop, needing no scene object and no script execution order.\n▪ Per-read buffering windows, so one press can be frame-exact for one reader and lenient for another.\n▪ A peek/consume split, so a condition that merely tests an intent cannot eat it.\n▪ Development-build diagnostics that name an intent nobody consumed, instead of a character that mysteriously ignores input.\n▪ Optional Entities support, compiled only when the Entities package is present.",
   "unity": "6000.0",
