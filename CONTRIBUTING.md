@@ -75,7 +75,6 @@ This repository is a Unity project that hosts the package, so the sample and tes
 | `Packages/com.mygamedevtools.fixed-input` | the package itself |
 | `Packages/com.mygamedevtools.fixed-input/Samples` | the reference sample, with a MonoBehaviour and an Entities scene |
 | `Packages/com.mygamedevtools.fixed-input/Tests` | edit mode and play mode tests |
-| `Assets/Tests` | tests for the sample's code, which can't ship with the package |
 | `Assets`, `ProjectSettings` | the host project |
 
 `com.unity.entities` is a development dependency of the host project, not of the package. It is there so the optional Entities assembly is compiled and tested; a consumer without Entities installs nothing extra and compiles nothing extra. Before submitting a change that touches the Entities assembly, also check that the package still compiles with Entities removed from `Packages/manifest.json`.
@@ -85,6 +84,12 @@ The host project uses the built-in render pipeline, so the sample renders exactl
 Keep `m_LayerCollisionMatrix` in `ProjectSettings/DynamicsManager.asset` as a plain hex string. Saving the physics settings in Unity 6.6 rewrites it as `{_typeName: unsigned int, _data: …}`, which Unity 6000.0 and 6000.3 can't read: they load the project with no layer colliding, and the physics tests fail there. If it changes, restore the hex string before committing.
 
 Run the tests from `Window > General > Test Runner`, in both `EditMode` and `PlayMode`.
+
+## Release archives
+
+Both release workflows call `PackageExporter.ExportPackage` through the shared CI's `unitypackage-export-method` input. The exporter lives in `Assets/Editor`, outside the distributed package, and uses the embedded Asset Store Tools exporter through reflection, matching scene-loader. It writes an unsigned `com.mygamedevtools.fixed-input.unitypackage` to the project root. The UPM tarball is signed separately by the shared CI.
+
+CI updates the package version and renames `Samples` and its manifest paths to `Samples~` before opening Unity. Asset Store Tools collects files from disk and reads GUIDs from metadata, including hidden sample files. Samples contain no tests, and package test assemblies do not reference sample assemblies. No signing organization or custom command-line parameters are needed for the `.unitypackage` export.
 
 ## Code of Conduct
 
