@@ -46,7 +46,7 @@ This will copy the latest documentation and place it into the `version-<version>
 You can update the files inside `docs/` to reflect the new documentation version.
 
 Make sure to update `lastVersion` and the version labels in the `docusaurus.config.js` file as well.
-The label tracks the minor release (e.g. `0.2.x`), so it only needs a bump when a new minor ships — not on every patch:
+The label tracks the minor release (e.g. `1.0.x`), so it only needs a bump when a new minor ships — not on every patch:
 
 ```js
 const config = {

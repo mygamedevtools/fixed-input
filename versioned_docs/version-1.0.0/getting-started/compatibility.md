@@ -15,6 +15,10 @@ Earlier Unity versions simply ignore the signature.
 Check the [installation guide](./installation.mdx) to see which installation methods are signed.
 :::
 
+## Versioning
+
+Releases follow [semantic versioning](https://semver.org/). From `1.0.0` the public API is stable: a breaking change bumps the major version, a new feature the minor, and a fix the patch. See the [changelog](https://github.com/mygamedevtools/fixed-input/blob/main/CHANGELOG.md) for what each release changed.
+
 ## Packages
 
 This package has **no dependencies**. It works with any input source, including the legacy Input Manager, the [Input System](https://docs.unity3d.com/Packages/com.unity.inputsystem@latest) or your own code, because a writer only needs to call `Set`.
