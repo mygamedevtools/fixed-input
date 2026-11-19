@@ -67,21 +67,21 @@ const config = {
           // Point "Edit this page" at the translation rather than the English
           // source when browsing a localized page.
           editLocalizedFiles: true,
-          // 0.2.0 has shipped, so it is the default at /docs/.
+          // 1.0.0 has shipped, so it is the default at /docs/.
           //
           // `current` — the docs/ folder everyone edits — is not published while
           // its content is identical to the released snapshot: a version labelled
-          // "Unreleased" that reads the same as 0.2.x only makes the dropdown
+          // "Unreleased" that reads the same as 1.0.x only makes the dropdown
           // harder to use. Set this back to true when work on the next version
           // starts diverging, and give `current` a label and an unreleased banner
           // again at that point.
           includeCurrentVersion: false,
-          lastVersion: '0.2.0',
+          lastVersion: '1.0.0',
           versions: {
-            '0.2.0': {
+            '1.0.0': {
               // Minor-level label: patch releases don't change the docs, so
               // this only needs a bump when a new minor ships.
-              label: '0.2.x'
+              label: '1.0.x'
             },
           }
         },

@@ -15,6 +15,10 @@ Versões anteriores do Unity simplesmente ignoram a assinatura.
 Confira o [guia de instalação](./installation.mdx) para ver quais métodos de instalação são assinados.
 :::
 
+## Versionamento {/* #versioning */}
+
+As versões seguem o [versionamento semântico](https://semver.org/lang/pt-BR/). A partir da `1.0.0`, a API pública é estável: uma mudança incompatível aumenta a versão major, uma nova funcionalidade a minor, e uma correção a patch. Veja o [changelog](https://github.com/mygamedevtools/fixed-input/blob/main/CHANGELOG.md) para saber o que cada versão mudou.
+
 ## Pacotes {/* #packages */}
 
 Este pacote **não tem dependências**. Ele funciona com qualquer fonte de input, incluindo o Input Manager legado, o [Input System](https://docs.unity3d.com/Packages/com.unity.inputsystem@latest) ou o seu próprio código, porque um writer só precisa chamar `Set`.
