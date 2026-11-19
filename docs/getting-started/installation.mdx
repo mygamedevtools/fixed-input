@@ -1,0 +1,105 @@
+---
+sidebar_position: 1
+description: How to install the My Fixed Tick package.
+---
+
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
+# Installation
+
+You can install the package via **OpenUPM**, **Git**, **Tarball** or **Unity Package**. It needs Unity `6000.0` or newer, and no other packages.
+
+Releases are signed with [UPM package signing](https://docs.unity3d.com/6000.3/Documentation/Manual/upm-signature.html), which the **Package Manager** verifies from **Unity 6.3** onwards. Which method you pick decides whether you get that signature:
+
+| Method | Signature |
+|---|---|
+| **OpenUPM** | Signed — republishes the release tarball |
+| **Tarball** | Signed |
+| **Git** | Unsigned, always |
+| **Unity Package** | Unsigned |
+
+<Tabs defaultValue={(() => {
+          if (typeof window !== "undefined") {
+              const hash = window.location.hash.replace("#", "").toLowerCase();
+              return ["openupm", "git", "tarball", "unitypackage"].includes(hash) ? hash : "openupm";
+          }
+          return "openupm";
+      })()}>
+<TabItem value="openupm" label="OpenUPM" default>
+
+This package is available on the [OpenUPM](https://openupm.com/packages/com.mygamedevtools.fixed-input) registry.
+You can install an **OpenUPM** package either via [openupm-cli](https://github.com/openupm/openupm-cli) or manually via the **Package Manager**.
+
+<Tabs>
+<TabItem value="openupm-cli" label="openupm-cli" default>
+
+Requires [openupm-cli](https://github.com/openupm/openupm-cli) and [nodejs 18 or above](https://nodejs.org/en/download/).
+
+In your Unity project folder, open the terminal and type:
+
+```sh
+openupm add com.mygamedevtools.fixed-input
+```
+
+This will automatically update your **Scoped Registries** and install the package in your project.
+</TabItem>
+
+<TabItem value="manually" label="Package Manager">
+* Open `Edit/Project Settings/Package Manager`.
+* Add a new **Scoped Registry** (or edit the existing _OpenUPM_ entry):
+    ```
+    Name: Open UPM
+    URL: https://package.openupm.com
+    Scope(s): com.mygamedevtools
+    ```
+* Click `Apply`.
+* Open `Window/Package Manager`.
+* In the left column, select `Open UPM` inside `My Registries`.
+* Select `My Fixed Tick` under `My GameDev Tools`.
+* Click `Install`.
+</TabItem>
+</Tabs>
+
+</TabItem>
+
+<TabItem value="git" label="Git">
+
+Requires [Git](https://git-scm.com/) installed and added to the PATH.
+
+1. Open `Window/Package Manager`.
+2. Click <kbd>+</kbd>.
+3. Select `Install package from git URL...`.
+4. Paste `https://github.com/mygamedevtools/fixed-input.git#upm` into url.
+5. Click `Add`.
+
+To pin a version, use its tag instead of the branch, e.g. `https://github.com/mygamedevtools/fixed-input.git#upm/0.2.0`.
+</TabItem>
+
+<TabItem value="tarball" label="Tarball">
+
+1. Choose the [release](https://github.com/mygamedevtools/fixed-input/releases) you want to install and download the `com.mygamedevtools.fixed-input-<release>.tgz` asset.
+2. Open `Window/Package Manager`.
+3. Click <kbd>+</kbd>.
+4. Select `Install package from tarball...`.
+5. Select the `com.mygamedevtools.fixed-input-<release>.tgz` file you downloaded.
+</TabItem>
+
+<TabItem value="unitypackage" label="Unity Package">
+
+1. Choose the [release](https://github.com/mygamedevtools/fixed-input/releases) you want to install and download the `com.mygamedevtools.fixed-input.unitypackage` asset.
+2. Open it in Unity, or use `Assets/Import Package/Custom Package...`.
+3. Make sure everything is selected and click `Import`.
+
+The package installs as an embedded package under `Packages/com.mygamedevtools.fixed-input`, so the **Package Manager** still lists it and its samples stay optional.
+
+:::note
+Releases attach the `.unitypackage` from `0.2.0` onwards. It is unsigned; use the tarball if you need a signed download.
+:::
+
+</TabItem>
+</Tabs>
+
+:::info[Samples]
+The sample, including its 3D Game Kit art, is not imported with the package. Import **Input Surface Reference** from the package's **Samples** tab in the **Package Manager** when you want it. See [Input Surface Reference](../samples/input-surface-reference.md).
+:::

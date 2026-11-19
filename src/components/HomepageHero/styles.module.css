@@ -1,0 +1,288 @@
+.hero {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+  padding: 7rem 0 6rem;
+  min-height: 40rem;
+  /* data-theme="dark" on the element switches the --mgt-* tokens; Infima's hero
+     variables are resolved at :root, so set the colors here directly. */
+  background-color: var(--mgt-color-bg);
+  color: var(--mgt-color-text);
+}
+
+/* Signature corner stripes: equal widths, in order, bleeding off the top and right edges. */
+.stripes {
+  position: absolute;
+  /* The band's center sits just inside the corner, and the bars are long enough that both
+     ends fall outside the hero, so it bleeds off the top and right edges. */
+  top: 7rem;
+  right: 7rem;
+  display: flex;
+  /* Hairline ink gaps between the stripes, as on the social card and banners. */
+  gap: 3px;
+  transform: translate(50%, -50%) rotate(-45deg);
+  pointer-events: none;
+}
+
+.stripes i {
+  display: block;
+  width: 3.25rem;
+  height: 60rem;
+  background: var(--mgt-color-stripe-1);
+}
+
+.stripes i:nth-child(2) {
+  background: var(--mgt-color-stripe-2);
+}
+
+.stripes i:nth-child(3) {
+  background: var(--mgt-color-stripe-3);
+}
+
+.heroContent {
+  position: relative;
+  z-index: 1;
+  color: var(--mgt-color-text);
+  padding: 2rem;
+}
+
+/* Eyebrow: three stripe bars, then an uppercase mono label. */
+.eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--mgt-space-3);
+  margin: 0 0 1.25rem;
+  font-family: var(--ifm-font-family-monospace);
+  font-size: var(--mgt-font-size-sm);
+  font-weight: var(--mgt-font-weight-medium);
+  text-transform: uppercase;
+  letter-spacing: var(--mgt-font-letter-spacing-label);
+  color: var(--mgt-color-accent);
+}
+
+.eyebrowBars {
+  display: inline-flex;
+  gap: 4px;
+}
+
+.eyebrowBars i {
+  width: 24px;
+  height: 6px;
+  background: var(--mgt-color-stripe-1);
+}
+
+.eyebrowBars i:nth-child(2) {
+  background: var(--mgt-color-stripe-2);
+}
+
+.eyebrowBars i:nth-child(3) {
+  background: var(--mgt-color-stripe-3);
+}
+
+.heroTitle {
+  font-size: 4rem;
+  line-height: var(--mgt-font-line-height-tight);
+  margin-bottom: 1rem;
+  /* --ifm-heading-color is resolved at :root, so it would be ink in light mode. */
+  color: var(--mgt-color-text);
+}
+
+.heroSubtitle {
+  font-size: 1.5rem;
+  margin-bottom: 2rem;
+  color: var(--mgt-color-text-muted);
+}
+
+.indexCta {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 1rem;
+}
+
+/* Colors come from .button--primary (cream on ink inside this dark-scoped hero). */
+.buttonCta {
+  padding-inline: 2rem;
+}
+
+/* ---- the intent rail: the sample's overlay, reduced to two lanes ---- */
+
+.rail {
+  margin: 2.75rem auto 0;
+  width: 100%;
+  max-width: 44rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+  padding: 0.85rem 1.15rem 0.95rem;
+  border-radius: var(--mgt-radius-md);
+  background: var(--mgt-color-surface);
+  border: 1px solid var(--mgt-color-border);
+  text-align: left;
+  font-family: var(--ifm-font-family-monospace);
+}
+
+.railHead {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-bottom: 0.2rem;
+}
+
+.railTick {
+  font-size: 0.7rem;
+  letter-spacing: var(--mgt-font-letter-spacing-label);
+  color: var(--mgt-color-text-muted);
+}
+
+.railTick b {
+  font-family: var(--mgt-font-family-display);
+  font-weight: normal;
+  font-size: 1.15rem;
+  letter-spacing: 0;
+  color: var(--mgt-color-text);
+  font-variant-numeric: tabular-nums;
+  margin-left: 0.35rem;
+}
+
+/* Same code colors as the site's Prism theme. */
+.railOp {
+  font-size: 0.72rem;
+  color: var(--mgt-color-code-comment);
+  white-space: nowrap;
+}
+
+.railVar {
+  color: var(--mgt-color-code-text);
+}
+
+.railFn {
+  color: var(--mgt-color-code-keyword);
+}
+
+.railNum {
+  color: var(--mgt-color-code-string);
+}
+
+.lane {
+  display: grid;
+  grid-template-columns: 4rem 1fr 2.2rem;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.laneName {
+  font-size: 0.75rem;
+  color: var(--mgt-color-text);
+}
+
+.laneAge {
+  font-size: 0.72rem;
+  color: var(--mgt-color-text-muted);
+  font-variant-numeric: tabular-nums;
+  text-align: right;
+}
+
+.cells {
+  display: grid;
+  grid-template-columns: repeat(32, 1fr);
+  gap: 2px;
+}
+
+/* Mirrors the sample overlay's lane colors (InputSurfacePanelBrand.uss), so the hero and the
+   shipped overlay agree on what each state looks like. */
+.cell {
+  display: block;
+  height: 14px;
+  border-radius: 2px;
+  background: var(--mgt-color-border);
+}
+
+.cellSet {
+  background: var(--mgt-color-warning);
+}
+
+.cellWaiting {
+  background: var(--mgt-color-warning-border);
+}
+
+.cellConsumed {
+  background: var(--mgt-color-success);
+}
+
+.cellExpired {
+  background: var(--mgt-color-error);
+}
+
+.legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1.1rem;
+  margin-top: 0.25rem;
+  font-size: 0.66rem;
+  letter-spacing: var(--mgt-font-letter-spacing-label);
+  text-transform: uppercase;
+  color: var(--mgt-color-text-muted);
+}
+
+.legend span {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+.swatch {
+  display: inline-block;
+  width: 10px;
+  height: 10px;
+  border-radius: 2px;
+}
+
+@media only screen and (max-width: 768px) {
+  .hero {
+    min-height: 34rem;
+    padding: 5rem 0 4rem;
+  }
+
+  .stripes {
+    top: 3rem;
+    right: 3rem;
+  }
+
+  .stripes i {
+    width: 1.5rem;
+  }
+
+  .heroTitle {
+    font-size: 2.5rem;
+  }
+
+  .heroSubtitle {
+    font-size: 1.25rem;
+  }
+
+  .rail {
+    margin-top: 2rem;
+  }
+
+  .railOp {
+    display: none;
+  }
+
+  .lane {
+    grid-template-columns: 3.4rem 1fr 2rem;
+    gap: 0.5rem;
+  }
+
+  .cells {
+    gap: 1px;
+  }
+
+  .cell {
+    height: 12px;
+  }
+}

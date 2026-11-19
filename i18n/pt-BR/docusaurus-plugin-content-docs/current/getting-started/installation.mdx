@@ -1,0 +1,105 @@
+---
+sidebar_position: 1
+description: Como instalar o pacote My Fixed Tick.
+---
+
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
+# Instalação
+
+Você pode instalar o pacote via **OpenUPM**, **Git**, **Tarball** ou **Unity Package**. Ele precisa do Unity `6000.0` ou mais recente, e de nenhum outro pacote.
+
+As versões são assinadas com a [assinatura de pacotes do UPM](https://docs.unity3d.com/6000.3/Documentation/Manual/upm-signature.html), que o **Package Manager** verifica a partir do **Unity 6.3**. O método que você escolher determina se você recebe essa assinatura:
+
+| Método | Assinatura |
+|---|---|
+| **OpenUPM** | Assinado — republica o tarball da versão |
+| **Tarball** | Assinado |
+| **Git** | Sem assinatura, sempre |
+| **Unity Package** | Sem assinatura |
+
+<Tabs defaultValue={(() => {
+          if (typeof window !== "undefined") {
+              const hash = window.location.hash.replace("#", "").toLowerCase();
+              return ["openupm", "git", "tarball", "unitypackage"].includes(hash) ? hash : "openupm";
+          }
+          return "openupm";
+      })()}>
+<TabItem value="openupm" label="OpenUPM" default>
+
+Esse pacote está disponível no registro [OpenUPM](https://openupm.com/packages/com.mygamedevtools.fixed-input).
+Você pode instalar um pacote **OpenUPM** tanto pelo [openupm-cli](https://github.com/openupm/openupm-cli) quanto manualmente pelo **Package Manager**.
+
+<Tabs>
+<TabItem value="openupm-cli" label="openupm-cli" default>
+
+Requer [openupm-cli](https://github.com/openupm/openupm-cli) e [nodejs 18 ou mais recente](https://nodejs.org/en/download/).
+
+Na pasta do seu projeto Unity, abra o terminal e digite:
+
+```sh
+openupm add com.mygamedevtools.fixed-input
+```
+
+Isso atualiza automaticamente os seus **Scoped Registries** e instala o pacote no seu projeto.
+</TabItem>
+
+<TabItem value="manually" label="Package Manager">
+* Abra `Edit/Project Settings/Package Manager`.
+* Adicione um novo **Scoped Registry** (ou edite o registro _OpenUPM_ existente):
+    ```
+    Name: Open UPM
+    URL: https://package.openupm.com
+    Scope(s): com.mygamedevtools
+    ```
+* Clique em `Apply`.
+* Abra `Window/Package Manager`.
+* Na coluna da esquerda, selecione `Open UPM` dentro de `My Registries`.
+* Selecione `My Fixed Tick` dentro de `My GameDev Tools`.
+* Clique em `Install`.
+</TabItem>
+</Tabs>
+
+</TabItem>
+
+<TabItem value="git" label="Git">
+
+Requer [Git](https://git-scm.com/) instalado e disponível no PATH.
+
+1. Abra `Window/Package Manager`.
+2. Clique em <kbd>+</kbd>.
+3. Selecione `Install package from git URL...`.
+4. Cole `https://github.com/mygamedevtools/fixed-input.git#upm` no campo de URL.
+5. Clique em `Add`.
+
+Para fixar uma versão, use a tag dela no lugar do branch, por exemplo `https://github.com/mygamedevtools/fixed-input.git#upm/0.2.0`.
+</TabItem>
+
+<TabItem value="tarball" label="Tarball">
+
+1. Escolha a [versão](https://github.com/mygamedevtools/fixed-input/releases) que você quer instalar e baixe o arquivo `com.mygamedevtools.fixed-input-<release>.tgz`.
+2. Abra `Window/Package Manager`.
+3. Clique em <kbd>+</kbd>.
+4. Selecione `Install package from tarball...`.
+5. Selecione o arquivo `com.mygamedevtools.fixed-input-<release>.tgz` que você baixou.
+</TabItem>
+
+<TabItem value="unitypackage" label="Unity Package">
+
+1. Escolha a [versão](https://github.com/mygamedevtools/fixed-input/releases) que você quer instalar e baixe o arquivo `com.mygamedevtools.fixed-input.unitypackage`.
+2. Abra-o no Unity, ou use `Assets/Import Package/Custom Package...`.
+3. Confira se tudo está selecionado e clique em `Import`.
+
+O pacote é instalado como um pacote embutido em `Packages/com.mygamedevtools.fixed-input`, então o **Package Manager** continua listando-o e os exemplos dele continuam opcionais.
+
+:::note
+As versões trazem o `.unitypackage` a partir da `0.2.0`. Ele não é assinado; use o tarball se você precisar de um download assinado.
+:::
+
+</TabItem>
+</Tabs>
+
+:::info[Exemplos]
+O exemplo, incluindo a arte do 3D Game Kit, não é importado junto com o pacote. Importe o **Input Surface Reference** pela aba **Samples** do pacote no **Package Manager** quando quiser usá-lo. Veja [Input Surface Reference](../samples/input-surface-reference.md).
+:::

@@ -1,0 +1,5 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://fixed-input.mygamedevtools.com/sitemap.xml
+Sitemap: https://fixed-input.mygamedevtools.com/pt-BR/sitemap.xml

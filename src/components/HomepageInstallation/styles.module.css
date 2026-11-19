@@ -1,0 +1,20 @@
+.installationButtons {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+}
+
+/* Four equal choices, so none of them gets the primary fill: outlined in the text color,
+   filled on hover. */
+.installationButtons a {
+    width: 12rem;
+    --ifm-button-background-color: transparent;
+    --ifm-button-border-color: var(--mgt-color-text);
+    --ifm-button-color: var(--mgt-color-text);
+}
+
+.installationButtons a:hover {
+    --ifm-button-background-color: var(--mgt-color-primary);
+    --ifm-button-border-color: var(--mgt-color-primary);
+    --ifm-button-color: var(--mgt-color-on-primary);
+}

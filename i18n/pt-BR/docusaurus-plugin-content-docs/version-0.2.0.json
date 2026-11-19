@@ -1,0 +1,18 @@
+{
+  "version.label": {
+    "message": "0.2.x",
+    "description": "The label for version 0.2.0"
+  },
+  "sidebar.documentationSidebar.category.Getting Started": {
+    "message": "Começando",
+    "description": "The label for category 'Getting Started' in sidebar 'documentationSidebar'"
+  },
+  "sidebar.documentationSidebar.category.Advanced Usage": {
+    "message": "Guia Avançado",
+    "description": "The label for category 'Advanced Usage' in sidebar 'documentationSidebar'"
+  },
+  "sidebar.documentationSidebar.category.Samples": {
+    "message": "Exemplos",
+    "description": "The label for category 'Samples' in sidebar 'documentationSidebar'"
+  }
+}
