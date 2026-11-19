@@ -68,7 +68,23 @@ The point is the input surface between writers and readers. Put a project's inpu
 
 ## 📦 Installation
 
-You can install the package via **Tarball**, **Unity Package**, or **Git**. It needs Unity 6000.0 or newer, and no other packages.
+You can install the package via **[OpenUPM](https://openupm.com/packages/com.mygamedevtools.fixed-input)**, **Tarball**, **Unity Package**, or **Git**. It needs Unity 6000.0 or newer, and no other packages.
+Check the full installation guide in the [documentation](https://fixed-input.mygamedevtools.com/docs/getting-started/installation).
+
+#### OpenUPM (UPM Signed)
+
+* Open `Edit/Project Settings/Package Manager`.
+* Add a new **Scoped Registry** (or edit the existing _OpenUPM_ entry):
+    ```
+    Name: Open UPM
+    URL: https://package.openupm.com
+    Scope(s): com.mygamedevtools
+    ```
+* Click `Apply`.
+* Open `Window/Package Manager`.
+* In the left column, select `Open UPM` inside `My Registries`.
+* Select `My Fixed Tick` under `My GameDev Tools`.
+* Click `Install`.
 
 #### Tarball (UPM Signed)
 
@@ -90,18 +106,22 @@ Download the `com.mygamedevtools.fixed-input.unitypackage` asset from a release 
 4. Paste `https://github.com/mygamedevtools/fixed-input.git#upm` into url.
 5. Click `Add`.
 
-To pin a version, use its tag instead of the branch, e.g. `https://github.com/mygamedevtools/fixed-input.git#upm/0.2.0`.
+To pin a version, use its tag instead of the branch, e.g. `https://github.com/mygamedevtools/fixed-input.git#upm/1.0.0`.
 
 > [!NOTE]
 > The sample, including its 3D Game Kit art, is not imported with the package. Import **Input Surface Reference** from the package's `Samples` tab in the Package Manager when you want it.
 
 ## 📚 Documentation
 
-The detailed documentation lives in the [package README](Packages/com.mygamedevtools.fixed-input/README.md): the [contract](Packages/com.mygamedevtools.fixed-input/README.md#the-contract), what [the tick](Packages/com.mygamedevtools.fixed-input/README.md#the-tick) actually means, where [latency](Packages/com.mygamedevtools.fixed-input/README.md#latency-and-which-parts-of-it-you-can-remove) comes from and which parts of it you can remove, the [diagnostics](Packages/com.mygamedevtools.fixed-input/README.md#diagnostics), and the [sample](Packages/com.mygamedevtools.fixed-input/README.md#samples).
+The detailed documentation, including usage guides, the input surface contract, tick sources, latency, diagnostics, Entities support and a walkthrough of the sample, is available in the [official documentation](https://fixed-input.mygamedevtools.com/).
+
+Start with [Basic Usage](https://fixed-input.mygamedevtools.com/docs/getting-started/basic-usage) for a full surface, writer and reader, or [The Input Surface](https://fixed-input.mygamedevtools.com/docs/advanced-usage/input-surface) for the six rules that make a surface swappable.
 
 ## 🤝 Contributing
 
 We welcome contributions! Please check our [contribution guidelines](./CONTRIBUTING.md).
+
+The documentation site lives on the [`docs`](https://github.com/mygamedevtools/fixed-input/tree/docs) branch, so open documentation pull requests against it rather than `main`.
 
 ## 📄 License
 
