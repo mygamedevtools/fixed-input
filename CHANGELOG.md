@@ -1,5 +1,17 @@
 # Changelog
 
+# [1.0.0](https://github.com/mygamedevtools/fixed-input/compare/0.2.0...1.0.0) (2026-11-19)
+
+
+### Documentation
+
+* point the package at the documentation site ([#7](https://github.com/mygamedevtools/fixed-input/issues/7)) ([737231f](https://github.com/mygamedevtools/fixed-input/commit/737231fd16d7315669d333d49ed515531258929e))
+
+
+### BREAKING CHANGES
+
+* 1.0.0 declares the public API stable. Nothing in it changes; from here on, a breaking change bumps the major version.
+
 # [0.2.0](https://github.com/mygamedevtools/fixed-input/compare/0.1.1...0.2.0) (2026-10-09)
 
 
